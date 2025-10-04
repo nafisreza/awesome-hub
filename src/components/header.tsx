@@ -5,8 +5,8 @@ import { useState, useEffect } from 'react'
 import { Star, BookOpen, Menu, Github, Zap, Sparkles, Search, Command } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { useBookmarks } from '@/hooks/useBookmarks'
+import { Squash as Hamburger } from "hamburger-react";
 
 const navigation = [
   { name: 'Explore', href: '/', icon: Search },
@@ -114,30 +114,13 @@ export function Header() {
             </Button>
 
             {/* Mobile Menu */}
-            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="md:hidden"
-                >
-                  <Menu className="w-5 h-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-72 glass-strong">
-                <div className="flex flex-col h-full">
-                  {/* Mobile Header */}
-                  <div className="flex items-center justify-between pb-6 border-b border-border/50">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-gradient-to-r from-primary to-accent rounded-lg">
-                        <BookOpen className="w-4 h-4 text-white" />
-                      </div>
-                      <span className="font-bold text-gradient">AwesomeHub</span>
-                    </div>
-                  </div>
-
+            <div className='lg:hidden'>
+            <Hamburger toggled={isMobileMenuOpen} size={20} toggle={setIsMobileMenuOpen} />
+              { isMobileMenuOpen && 
+              <>
+                <div className="fixed left-0 shadow-4xl right-0 top-[4rem] p-5 pt-0 bg-white border-b border-b-white/20 z-50">
                   {/* Mobile Navigation */}
-                  <nav className="flex flex-col gap-2 py-6">
+                  <nav className="flex flex-col gap-2 py-2">
                     {navigation.map((item) => {
                       const IconComponent = item.icon
                       return (
@@ -188,8 +171,9 @@ export function Header() {
                     </Button>
                   </div>
                 </div>
-              </SheetContent>
-            </Sheet>
+              </>
+              }
+            </div>
           </div>
         </div>
       </div>

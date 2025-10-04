@@ -237,3 +237,34 @@
     animation: shimmer 2s infinite;
   }
 }
+
+
+.markdown {
+  @apply space-y-4; /* vertical spacing between elements */
+}
+
+/* Headings */
+.markdown h1 { @apply text-5xl font-bold; }
+.markdown h2 { @apply text-3xl font-semibold; }
+.markdown h3 { @apply text-2xl font-semibold; }
+.markdown h4 { @apply text-xl font-semibold; }
+
+/* Links */
+.markdown a { @apply text-blue-500 underline; }
+
+/* Paragraphs */
+.markdown p { @apply leading-relaxed; }
+
+/* Blockquotes */
+.markdown blockquote { @apply bg-gray-300 border-l-4 border-blue-500 px-4 py-3 my-4; }
+
+/* Code blocks */
+.markdown pre { @apply bg-gray-300 text-gray-200 p-6 rounded-md overflow-x-auto; }
+
+/* Horizontal rules */
+.markdown hr { @apply border-t-2 border-gray-300 my-8; }
+
+/* Tables */
+.markdown table { @apply table-auto border-collapse border border-gray-300; }
+.markdown th { @apply p-4 border border-gray-300 bg-gray-200 font-semibold; }
+.markdown td { @apply p-4 border border-gray-300; }

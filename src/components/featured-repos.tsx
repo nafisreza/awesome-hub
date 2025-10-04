@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Star, GitFork, ExternalLink, Calendar,   Clipboard, ClipboardCheck, } from 'lucide-react';
+import { Star, GitFork, ExternalLink, Calendar,   Clipboard, ClipboardCheck,  } from 'lucide-react';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { FeaturedReposSkeleton } from '@/components/skeletons/FeaturedReposSkeleton';
 import { toast } from "sonner";
+import Link from 'next/link';
+
 
 // GitHub API response format
 export interface Repository {
@@ -74,6 +76,7 @@ export function FeaturedRepos() {
     }, 800);
   };
 
+
   if (loading) {
     return <FeaturedReposSkeleton />;
   }
@@ -90,6 +93,8 @@ export function FeaturedRepos() {
             className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-200"
           >
             <div className="flex items-start justify-between gap-2 mb-4">
+              <Link href={`/repo/${repo.owner.login}/${repo.name}`}>
+
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                   {repo.name}
@@ -98,6 +103,24 @@ export function FeaturedRepos() {
                   {repo.full_name}
                 </p>
               </div>
+              </Link>
+              <button
+                aria-label="Copy repository URL"
+                onClick={() => handleCopyURL(repo)}
+                className=" text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer"
+              >
+                {copiedRepoId === repo.id ? (
+                  <ClipboardCheck
+                    aria-label="Copied"
+                    className="size-5 text-green-500 transition-transform duration-200 scale-110"
+                  />
+                ) : (
+                  <Clipboard
+                    aria-label="Copy repository URL"
+                    className="size-5"
+                  />
+                )}
+              </button>
               <button
                 aria-label="Copy repository URL"
                 onClick={() => handleCopyURL(repo)}

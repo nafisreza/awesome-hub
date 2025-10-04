@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Star, GitFork, ExternalLink, Calendar } from 'lucide-react';
+import { formatNumber, formatDate } from '@/lib/utils';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { Skeleton } from './skeleton';
 
@@ -50,19 +51,6 @@ export function FeaturedRepos() {
 
     fetchFeaturedRepos();
   }, []);
-
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-    return num.toString();
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-    });
-  };
 
   if (loading) {
     return (
@@ -173,7 +161,7 @@ export function FeaturedRepos() {
               </div>
               <div className='flex items-center gap-1'>
                 <Calendar className='w-4 h-4' />
-                <span>{formatDate(repo.updated_at)}</span>
+                <span>{formatDate(repo.updated_at, { month: 'short', day: 'numeric' })}</span>
               </div>
             </div>
 

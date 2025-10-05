@@ -50,11 +50,6 @@ function SearchPageContent() {
         setIsLoadingMore(true)
       }
 
-      if (!query.trim() && category === "all") {
-        setError("Please enter a search term or select a category")
-        return
-      }
-
       const filters: SearchFilters = {
         query: query.trim() || "awesome",
       }
@@ -106,15 +101,15 @@ function SearchPageContent() {
       return
     }
 
-		// Update URL params
-		const params = new URLSearchParams();
-		if (searchQuery.trim()) params.set("q", searchQuery.trim());
-		if (selectedCategory !== "all") params.set("category", selectedCategory);
+    // Update URL params
+    const params = new URLSearchParams()
+    if (searchQuery.trim()) params.set("q", searchQuery.trim())
+    if (selectedCategory !== "all") params.set("category", selectedCategory)
 
-		router.replace(`/search?${params.toString()}`);
-		setCurrentPage(1);
-		searchRepositories(searchQuery, selectedCategory, 1, false);
-	};
+    router.replace(`/search?${params.toString()}`)
+    setCurrentPage(1)
+    searchRepositories(searchQuery, selectedCategory, 1, false)
+  }
 
   const handleLoadMore = () => {
     if (hasMore && !isLoadingMore) {
@@ -138,9 +133,7 @@ function SearchPageContent() {
     setSearchQuery(query || "")
     setSelectedCategory(category)
 
-    if (query || category !== "all") {
-      searchRepositories(query || "", category)
-    }
+    searchRepositories(query || "", category)
   }, [searchParams])
 
   return (

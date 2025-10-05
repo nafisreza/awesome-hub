@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Star, BookOpen, Menu, Github, Zap, Sparkles, Search, Command } from 'lucide-react'
+import { Star, BookOpen, Menu, Github, Zap, Sparkles, Search, Command, Sun, Moon } from 'lucide-react'
+import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
@@ -19,6 +20,17 @@ export function Header() {
   const { bookmarks } = useBookmarks()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { theme, setTheme, resolvedTheme } = useTheme()
+
+  // Respect system preference on first visit and save to localStorage on change
+  useEffect(() => {
+    const saved = localStorage.getItem('theme')
+    if (!saved) {
+      // next-themes will set system by default; nothing to do here
+      return
+    }
+    setTheme(saved)
+  }, [setTheme])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -68,6 +80,18 @@ export function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
+            {/* Theme toggle */}
+            <button
+              aria-label="Toggle dark mode"
+              onClick={() => {
+                const next = resolvedTheme === 'dark' ? 'light' : 'dark'
+                setTheme(next)
+                try { localStorage.setItem('theme', next) } catch {}
+              }}
+              className="p-2 rounded-md hover:bg-accent/10 transition-colors"
+            >
+              {resolvedTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
             {/* Command shortcut hint */}
             <div className="hidden lg:flex items-center gap-1 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-md">
               <Command className="w-3 h-3" />

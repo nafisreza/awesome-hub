@@ -1,5 +1,6 @@
 import { Octokit } from "@octokit/rest"
 
+
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN, // Will work without token (lower rate limits)
 })
@@ -19,6 +20,8 @@ export interface GitHubRepo {
   owner: {
     login: string
     avatar_url: string
+      html_url: string
+
   }
 }
 
@@ -31,6 +34,17 @@ export interface SearchFilters {
   sort?: "stars" | "forks" | "updated"
   order?: "desc" | "asc"
   dateRange?: "day" | "week" | "month" | "year"
+}
+export interface GitHubContributor {
+  login: string
+  avatar_url: string
+  html_url: string
+  contributions: number
+}
+
+export interface GitHubReadme {
+  content: string
+  encoding: string
 }
 
 export class GitHubService {
@@ -178,6 +192,61 @@ export class GitHubService {
       .map(([language, count]) => ({ language, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 20)
+  }
+   /** Fetch repo contributors (paginated) */
+  static async getRepoContributors(
+    owner: string,
+    repo: string,
+    page: number = 1,
+    per_page: number = 30
+  ): Promise<GitHubContributor[]> {
+    try {
+      const response = await octokit.rest.repos.listContributors({
+        owner,
+        repo,
+        page,
+        per_page,
+      })
+      return response.data as GitHubContributor[]
+    } catch (error) {
+      console.error('Error fetching contributors:', error)
+      return []
+    }
+  }
+
+  // /** Fetch repo README (raw markdown base64) */
+  static async getRepoReadme(owner: string, repo: string): Promise<string | null> {
+    try {
+      const response = await octokit.rest.repos.getReadme({
+        owner,
+        repo,
+      })
+      const { content, encoding } = response.data as GitHubReadme
+   
+      if (encoding === 'base64') {
+        return Buffer.from(content, 'base64').toString('utf-8')
+      }
+      return null
+    } catch {
+      console.warn(`No README found for ${owner}/${repo}`)
+      return null
+    }
+  }
+
+
+  /** Fetch related repositories by first topic */
+  static async getRelatedRepos(owner: string, repo: string) {
+    try {
+      const repoData = await this.getRepoDetails(owner, repo)
+      if (!repoData || !repoData.topics?.length) return []
+
+      // Pick first topic to suggest related repos
+      const mainTopic = repoData.topics[0]
+      return await this.searchAwesomeReposByTopic(mainTopic)
+    } catch {
+      console.error('Error fetching related repos')
+      return []
+    }
   }
 }
 

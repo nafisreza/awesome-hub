@@ -106,14 +106,15 @@ function SearchPageContent() {
       return
     }
 
-    // Update URL params
-    const params = new URLSearchParams()
-    if (searchQuery.trim()) params.set("q", searchQuery.trim())
-    if (selectedCategory !== "all") params.set("category", selectedCategory)
+		// Update URL params
+		const params = new URLSearchParams();
+		if (searchQuery.trim()) params.set("q", searchQuery.trim());
+		if (selectedCategory !== "all") params.set("category", selectedCategory);
 
-    router.replace(`/search?${params.toString()}`)
-    setCurrentPage(1)
-  }
+		router.replace(`/search?${params.toString()}`);
+		setCurrentPage(1);
+		searchRepositories(searchQuery, selectedCategory, 1, false);
+	};
 
   const handleLoadMore = () => {
     if (hasMore && !isLoadingMore) {

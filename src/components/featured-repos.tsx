@@ -7,6 +7,8 @@ import { formatNumber, formatDate } from "@/lib/utils";
 import { useBookmarks } from "@/hooks/useBookmarks";
 import { FeaturedReposSkeleton } from "@/components/skeletons/FeaturedReposSkeleton";
 import { toast } from "sonner";
+import Link from "next/link";
+
 
 export function FeaturedRepos() {
 	const [repos, setRepos] = useState<Repository[]>([]);
@@ -60,7 +62,9 @@ export function FeaturedRepos() {
 					>
 						<div className="flex items-start justify-between gap-2 mb-4">
 							<div className="flex-1">
-								<h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">{repo.name}</h3>
+								<Link href={`/repo/${repo.owner.login}/${repo.name}`}>
+									<h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">{repo.name}</h3>
+								</Link>
 								<p className="text-sm text-gray-600 dark:text-gray-400">{repo.full_name}</p>
 							</div>
 							<button

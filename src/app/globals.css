@@ -237,3 +237,65 @@
     animation: shimmer 2s infinite;
   }
 }
+
+@layer components {
+  /* Markdown content styling */
+  .markdown {
+    @apply space-y-4;
+  }
+  
+  .markdown h1 { 
+    @apply text-3xl font-bold mt-8 mb-4 text-foreground; 
+  }
+  .markdown h2 { 
+    @apply text-2xl font-semibold mt-6 mb-3 text-foreground; 
+  }
+  .markdown h3 { 
+    @apply text-xl font-semibold mt-4 mb-2 text-foreground; 
+  }
+  .markdown h4 { 
+    @apply text-lg font-semibold mt-4 mb-2 text-foreground; 
+  }
+  
+  .markdown a { 
+    @apply text-primary hover:text-primary/80 underline transition-colors; 
+  }
+  
+  .markdown p { 
+    @apply leading-relaxed mb-4 text-foreground; 
+  }
+  
+  .markdown blockquote { 
+    @apply border-l-4 border-primary bg-muted/50 px-4 py-2 my-4 italic text-muted-foreground; 
+  }
+  
+  .markdown pre { 
+    @apply bg-muted text-foreground p-4 rounded-lg overflow-x-auto text-sm font-mono; 
+  }
+  
+  .markdown code:not(pre code) { 
+    @apply bg-muted text-foreground px-1.5 py-0.5 rounded text-sm font-mono; 
+  }
+  
+  .markdown hr { 
+    @apply border-border my-8; 
+  }
+  
+  .markdown table { 
+    @apply w-full border-collapse border border-border rounded-lg overflow-hidden; 
+  }
+  .markdown th { 
+    @apply p-3 border border-border bg-muted font-semibold text-left text-foreground; 
+  }
+  .markdown td { 
+    @apply p-3 border border-border text-foreground; 
+  }
+  
+  .markdown ul, .markdown ol { 
+    @apply ml-6 mb-4; 
+  }
+  
+  .markdown li { 
+    @apply mb-1 text-foreground; 
+  }
+}

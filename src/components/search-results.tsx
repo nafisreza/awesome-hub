@@ -1,17 +1,18 @@
-'use client';
+"use client"
 
-import { Star, GitFork, ExternalLink, Calendar, Loader2, Package } from 'lucide-react';
-import { formatNumber, formatDate } from '@/lib/utils';
-import { GitHubRepo as Repository } from '@/lib/github';
+import { Star, GitFork, ExternalLink, Calendar, Loader2, Package } from "lucide-react"
+import { formatNumber, formatDate } from "@/lib/utils"
+import type { GitHubRepo as Repository } from "@/lib/github"
+import { useEffect, useRef } from "react"
 
 interface SearchResultsProps {
-  results: Repository[];
-  isLoading: boolean;
-  hasMore: boolean;
-  isLoadingMore: boolean;
-  onLoadMore: () => void;
-  searchQuery: string;
-  category: string;
+  results: Repository[]
+  isLoading: boolean
+  hasMore: boolean
+  isLoadingMore: boolean
+  onLoadMore: () => void
+  searchQuery: string
+  category: string
 }
 
 export function SearchResults({
@@ -25,27 +26,52 @@ export function SearchResults({
 }: SearchResultsProps) {
   const getLanguageColor = (language: string | null) => {
     const colors: { [key: string]: string } = {
-      JavaScript: 'bg-yellow-500',
-      TypeScript: 'bg-blue-600',
-      Python: 'bg-green-600',
-      Java: 'bg-red-600',
-      'C++': 'bg-blue-700',
-      C: 'bg-gray-600',
-      'C#': 'bg-purple-600',
-      Go: 'bg-cyan-600',
-      Rust: 'bg-orange-600',
-      PHP: 'bg-indigo-600',
-      Ruby: 'bg-red-500',
-      Swift: 'bg-orange-500',
-      Kotlin: 'bg-purple-500',
-      HTML: 'bg-orange-500',
-      CSS: 'bg-blue-500',
-      Shell: 'bg-gray-700',
-      Vue: 'bg-green-500',
-      React: 'bg-blue-400',
-    };
-    return colors[language || ''] || 'bg-gray-500';
-  };
+      JavaScript: "bg-yellow-500",
+      TypeScript: "bg-blue-600",
+      Python: "bg-green-600",
+      Java: "bg-red-600",
+      "C++": "bg-blue-700",
+      C: "bg-gray-600",
+      "C#": "bg-purple-600",
+      Go: "bg-cyan-600",
+      Rust: "bg-orange-600",
+      PHP: "bg-indigo-600",
+      Ruby: "bg-red-500",
+      Swift: "bg-orange-500",
+      Kotlin: "bg-purple-500",
+      HTML: "bg-orange-500",
+      CSS: "bg-blue-500",
+      Shell: "bg-gray-700",
+      Vue: "bg-green-500",
+      React: "bg-blue-400",
+    }
+    return colors[language || ""] || "bg-gray-500"
+  }
+
+  const sentinelRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (!hasMore) return
+
+    const el = sentinelRef.current
+    if (!el) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]
+        if (entry.isIntersecting && !isLoadingMore) {
+          onLoadMore()
+        }
+      },
+      { root: null, rootMargin: "200px 0px", threshold: 0 },
+    )
+
+    observer.observe(el)
+    return () => {
+      observer.unobserve(el)
+      observer.disconnect()
+    }
+  }, [hasMore, isLoadingMore, onLoadMore])
 
   if (isLoading) {
     return (
@@ -53,11 +79,9 @@ export function SearchResults({
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8">
             <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Searching repositories...
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Searching repositories...</h2>
             <p className="text-gray-600 dark:text-gray-400">
-              Finding awesome repositories for &ldquo;{searchQuery || 'awesome'}&rdquo;
+              Finding awesome repositories for &ldquo;{searchQuery || "awesome"}&rdquo;
             </p>
           </div>
 
@@ -93,16 +117,14 @@ export function SearchResults({
           </div>
         </div>
       </section>
-    );
+    )
   }
 
   return (
     <section className="mb-16">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            Search Results
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Search Results</h2>
           <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <span>Found {results.length} repositories</span>
             {searchQuery && (
@@ -111,7 +133,7 @@ export function SearchResults({
                 <span>for &ldquo;{searchQuery}&rdquo;</span>
               </>
             )}
-            {category !== 'all' && (
+            {category !== "all" && (
               <>
                 <span>•</span>
                 <span>in {category}</span>
@@ -123,9 +145,7 @@ export function SearchResults({
         {results.length === 0 ? (
           <div className="text-center py-12">
             <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-              No repositories found
-            </h3>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No repositories found</h3>
             <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
               Try adjusting your search terms or category filter to find more repositories.
             </p>
@@ -143,9 +163,7 @@ export function SearchResults({
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                         {repo.name}
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
-                        {repo.full_name}
-                        </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 truncate">{repo.full_name}</p>
                     </div>
                     <a
                       href={repo.html_url}
@@ -159,7 +177,7 @@ export function SearchResults({
                   </div>
 
                   <p className="text-gray-700 dark:text-gray-300 text-sm mb-4 line-clamp-2 min-h-[2.5rem]">
-                    {repo.description || 'No description available'}
+                    {repo.description || "No description available"}
                   </p>
 
                   <div className="flex flex-wrap gap-1 mb-4 min-h-[2rem]">
@@ -191,7 +209,7 @@ export function SearchResults({
                     </div>
                     <div className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
-                      <span>{formatDate(repo.updated_at, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                      <span>{formatDate(repo.updated_at, { month: "short", day: "numeric", year: "numeric" })}</span>
                     </div>
                   </div>
 
@@ -207,12 +225,13 @@ export function SearchResults({
               ))}
             </div>
 
-            {hasMore && (
-              <div className="text-center">
+            <div className="text-center">
+              {hasMore && <div ref={sentinelRef} className="h-1 w-full" aria-hidden />}
+              {hasMore && (
                 <button
                   onClick={onLoadMore}
                   disabled={isLoadingMore}
-                  className="px-8 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
+                  className="px-8 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto mt-2"
                 >
                   {isLoadingMore ? (
                     <>
@@ -220,14 +239,19 @@ export function SearchResults({
                       Loading more...
                     </>
                   ) : (
-                    'Load More Repositories'
+                    "Load More Repositories"
                   )}
                 </button>
-              </div>
-            )}
+              )}
+              {!hasMore && results.length > 0 && (
+                <p className="text-muted-foreground text-sm mt-4" role="status" aria-live="polite">
+                  You’ve reached the end of the results.
+                </p>
+              )}
+            </div>
           </>
         )}
       </div>
     </section>
-  );
+  )
 }

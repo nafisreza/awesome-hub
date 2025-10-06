@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect, Suspense } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
-import { Search, ArrowLeft } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { SearchResults } from "@/components/search-results"
-import type { GitHubRepo as Repository } from "@/lib/github"
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Search, ArrowLeft } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchResults } from "@/components/search-results";
+import type { GitHubRepo as Repository } from "@/lib/github";
 
 const categories = [
   { value: "all", label: "All Categories" },
@@ -23,132 +23,135 @@ const categories = [
   { value: "css", label: "CSS" },
   { value: "go", label: "Go" },
   { value: "rust", label: "Rust" },
-]
+];
 
 function SearchPageContent() {
-  const searchParams = useSearchParams()
-  const router = useRouter()
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "")
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "all")
-  const [searchResults, setSearchResults] = useState<Repository[]>([])
-  const [isSearching, setIsSearching] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [hasSearched, setHasSearched] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [hasMore, setHasMore] = useState(false)
-  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "all");
+  const [searchResults, setSearchResults] = useState<Repository[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const PER_PAGE = 10
+  const PER_PAGE = 10;
 
-  const searchRepositories = async (query: string, category: string, page = 1, append = false, allowEmpty = false) => {
+  const searchRepositories = async (
+    query: string,
+    category: string,
+    page = 1,
+    append = false,
+    allowEmpty = false
+  ) => {
     try {
       if (page === 1) {
-        setIsSearching(true)
-        setError(null)
+        setIsSearching(true);
+        setError(null);
       } else {
-        setIsLoadingMore(true)
+        setIsLoadingMore(true);
       }
 
       if (!allowEmpty && !query.trim() && category === "all") {
-        setError("Please enter a search term or select a category")
-        return
+        setError("Please enter a search term or select a category");
+        return;
       }
 
-      const params = new URLSearchParams()
-      if (query.trim()) params.set("q", query.trim())
-      if (category && category !== "all") params.set("category", category)
-      params.set("page", String(page))
-      params.set("per_page", String(PER_PAGE))
+      const params = new URLSearchParams();
+      if (query.trim()) params.set("q", query.trim());
+      if (category && category !== "all") params.set("category", category);
+      params.set("page", String(page));
+      params.set("per_page", String(PER_PAGE));
 
-      const res = await fetch(`/api/search?${params.toString()}`, { method: "GET" })
+      const res = await fetch(`/api/search?${params.toString()}`, { method: "GET" });
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
+        const data = await res.json().catch(() => ({}));
         const msg =
           data?.error ||
           (res.status === 429
             ? "GitHub rate limit hit. Please wait a bit before loading more."
-            : "Failed to search repositories")
-        throw new Error(msg)
+            : "Failed to search repositories");
+        throw new Error(msg);
       }
 
-      const data = await res.json()
-      const repos: Repository[] = data.items ?? []
+      const data = await res.json();
+      const repos: Repository[] = data.items ?? [];
 
       if (append && page > 1) {
         setSearchResults((prev) => {
-          const map = new Map<number, Repository>()
-          prev.forEach((r) => map.set(r.id, r))
+          const map = new Map<number, Repository>();
+          prev.forEach((r) => map.set(r.id, r));
           repos.forEach((r) => {
-            if (!map.has(r.id)) map.set(r.id, r)
-          })
-          return Array.from(map.values())
-        })
+            if (!map.has(r.id)) map.set(r.id, r);
+          });
+          return Array.from(map.values());
+        });
       } else {
-        setSearchResults(repos)
+        setSearchResults(repos);
       }
 
-      setCurrentPage(page)
-      setHasMore(Boolean(data.hasMore))
-      setHasSearched(true)
-      setError(null)
+      setCurrentPage(page);
+      setHasMore(Boolean(data.hasMore));
+      setError(null);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to search repositories"
-      setError(errorMessage)
-      console.error("[v0] Search error:", err)
+      const errorMessage = err instanceof Error ? err.message : "Failed to search repositories";
+      setError(errorMessage);
+      console.error("[v0] Search error:", err);
     } finally {
-      setIsSearching(false)
-      setIsLoadingMore(false)
+      setIsSearching(false);
+      setIsLoadingMore(false);
     }
-  }
+  };
 
   const handleSearch = () => {
     if (!searchQuery.trim() && selectedCategory === "all") {
-      setError("Please enter a search term or select a category")
-      return
+      setError("Please enter a search term or select a category");
+      return;
     }
 
-    const params = new URLSearchParams()
-    if (searchQuery.trim()) params.set("q", searchQuery.trim())
-    if (selectedCategory !== "all") params.set("category", selectedCategory)
+    const params = new URLSearchParams();
+    if (searchQuery.trim()) params.set("q", searchQuery.trim());
+    if (selectedCategory !== "all") params.set("category", selectedCategory);
 
-    router.replace(`/search?${params.toString()}`)
-    setCurrentPage(1)
-    searchRepositories(searchQuery, selectedCategory, 1, false)
-  }
+    router.replace(`/search?${params.toString()}`);
+    setCurrentPage(1);
+    searchRepositories(searchQuery, selectedCategory, 1, false);
+  };
 
   const handleLoadMore = () => {
     if (hasMore && !isLoadingMore) {
-      const nextPage = currentPage + 1
-      searchRepositories(searchQuery, selectedCategory, nextPage, true)
+      const nextPage = currentPage + 1;
+      searchRepositories(searchQuery, selectedCategory, nextPage, true);
     }
-  }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      handleSearch()
+      e.preventDefault();
+      handleSearch();
     }
-  }
+  };
 
   useEffect(() => {
-    const query = searchParams.get("q")
-    const category = searchParams.get("category") || "all"
+    const query = searchParams.get("q");
+    const category = searchParams.get("category") || "all";
 
-    setSearchQuery(query || "")
-    setSelectedCategory(category)
+    setSearchQuery(query || "");
+    setSelectedCategory(category);
 
     if (query || category !== "all") {
-      searchRepositories(query || "", category)
+      searchRepositories(query || "", category);
     } else {
-      searchRepositories("", "all", 1, false, true)
+      searchRepositories("", "all", 1, false, true);
     }
-  }, [searchParams])
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Header */}
         <div className="mb-8">
           <Button variant="ghost" onClick={() => router.push("/")} className="mb-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -158,14 +161,12 @@ function SearchPageContent() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Search Sidebar */}
           <div className="lg:col-span-1">
             <Card className="sticky top-8">
               <CardContent className="p-6">
                 <h2 className="text-lg font-semibold mb-4">Search</h2>
 
                 <div className="space-y-4">
-                  {/* Search Input */}
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
@@ -178,7 +179,6 @@ function SearchPageContent() {
                     />
                   </div>
 
-                  {/* Category Filter */}
                   <div>
                     <label className="block text-sm font-medium mb-2">Category</label>
                     <Select value={selectedCategory} onValueChange={setSelectedCategory}>
@@ -195,12 +195,10 @@ function SearchPageContent() {
                     </Select>
                   </div>
 
-                  {/* Search Button */}
                   <Button onClick={handleSearch} disabled={isSearching} className="w-full">
                     {isSearching ? "Searching..." : "Search"}
                   </Button>
 
-                  {/* Error Message */}
                   {error && (
                     <div className="p-3 bg-destructive/10 border border-destructive/20 rounded text-destructive text-sm">
                       {error}
@@ -211,7 +209,6 @@ function SearchPageContent() {
             </Card>
           </div>
 
-          {/* Results */}
           <div className="lg:col-span-3">
             <SearchResults
               results={searchResults}
@@ -226,7 +223,7 @@ function SearchPageContent() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function SearchPageFallback() {
@@ -251,7 +248,7 @@ function SearchPageFallback() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default function SearchPage() {
@@ -259,5 +256,5 @@ export default function SearchPage() {
     <Suspense fallback={<SearchPageFallback />}>
       <SearchPageContent />
     </Suspense>
-  )
+  );
 }

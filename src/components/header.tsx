@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useBookmarks } from '@/hooks/useBookmarks'
 import { Squash as Hamburger } from "hamburger-react";
+import { motion, AnimatePresence } from "framer-motion";
+
 
 const navigation = [
   { name: 'Explore', href: '/', icon: Search },
@@ -118,7 +120,14 @@ export function Header() {
             <Hamburger toggled={isMobileMenuOpen} size={20} toggle={setIsMobileMenuOpen} />
               { isMobileMenuOpen && 
               <>
-                <div className="fixed left-0 shadow-4xl right-0 top-[4rem] p-5 pt-0 bg-white border-b border-b-white/20 z-50">
+               <motion.div
+                  key="mobile-menu"
+                  initial={{ opacity: 0, y: -15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  className="fixed left-0 right-0 top-[4rem] p-5 pt-0 bg-white border-b border-b-white/20 shadow-4xl z-50"
+                >
                   {/* Mobile Navigation */}
                   <nav className="flex flex-col gap-2 py-2">
                     {navigation.map((item) => {
@@ -170,7 +179,7 @@ export function Header() {
                       </a>
                     </Button>
                   </div>
-                </div>
+                </motion.div>
               </>
               }
             </div>

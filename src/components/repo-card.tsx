@@ -1,13 +1,14 @@
 'use client'
 
 import { Star, GitFork, ExternalLink, Calendar, TrendingUp, Bookmark, BookmarkCheck } from 'lucide-react'
+import { GitHubRepo as Repository } from '@/lib/github';
+import { formatNumber, formatDate } from '@/lib/utils'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useBookmarks } from '@/hooks/useBookmarks'
-import { Repository } from './featured-repos'
 import { useState } from 'react'
 
 interface RepoCardProps {
@@ -20,15 +21,6 @@ export function RepoCard({ repo }: RepoCardProps) {
 
   // Check if the current repo is already bookmarked
   const isBookmarked = bookmarks.some(b => b.id === repo.id)
-
-  const formatNumber = (num: number) => {
-    if (num >= 1e6) return `${(num / 1e6).toFixed(1)}M`
-    if (num >= 1e3) return `${(num / 1e3).toFixed(1)}K`
-    return num.toString()
-  }
-
-  const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 
   const getLanguageColor = (language: string) => {
     const colors: Record<string, string> = {
@@ -203,7 +195,7 @@ export function RepoCard({ repo }: RepoCardProps) {
 
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <Calendar className="w-3 h-3" />
-              <span>{formatDate(repo.updated_at)}</span>
+              <span>{formatDate(repo.updated_at, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
             </div>
           </div>
         </CardContent>

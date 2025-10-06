@@ -1,1 +1,1 @@
-// Repository interface is defined in featured-repos.tsx
+// Repository interface is defined in github.ts

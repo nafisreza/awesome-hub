@@ -1,6 +1,6 @@
 'use client'
 
-import { Star, GitFork, Code, Sparkles, Zap, Trophy } from 'lucide-react'
+import { Sparkles, Zap, Trophy } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
@@ -21,7 +21,7 @@ export function HeroSection() {
   }, [])
 
   return (
-    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
+    <section className="relative pt-12 flex items-center justify-center overflow-hidden">
       {/* Animated Background */}
       <div className="absolute inset-0 gradient-mesh opacity-60" />
       
@@ -82,7 +82,7 @@ export function HeroSection() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
           <div className="glass-strong rounded-2xl p-6 hover-lift group">
             <div className="flex items-center justify-center mb-3">
               <div className="p-3 bg-yellow-500/10 rounded-xl group-hover:scale-110 transition-transform">
@@ -112,7 +112,7 @@ export function HeroSection() {
             <div className="text-2xl font-bold text-gray-700 mb-1">200+</div>
             <div className="text-sm text-muted-foreground">Categories</div>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   )

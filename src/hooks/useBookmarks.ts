@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Repository } from '@/components/featured-repos'
+import { GitHubRepo as Repository } from '@/lib/github';
 
 const BOOKMARKS_KEY = 'bookmarks';
 

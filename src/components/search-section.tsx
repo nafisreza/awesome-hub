@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, Sparkles, Hash, Zap, Globe, Code, Database, Shield, Server } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { Search, Hash, Zap, Globe, Code, Database, Shield, Server } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,7 +10,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Command as CommandPrimitive, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Skeleton } from '@/components/ui/skeleton';
 
 const categories = [
   { value: 'all', label: 'All Categories', icon: Globe, color: 'from-blue-500 to-purple-500' },
@@ -30,18 +30,39 @@ const trendingSearches = [
 ];
 
 export function SearchSection() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [isSearching, setIsSearching] = useState(false);
   const [isCommandOpen, setIsCommandOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSearch = () => {
-    setIsSearching(true);
-    setTimeout(() => {
-      setIsSearching(false);
-    }, 2000);
-  };
+  const navigateToSearch = useCallback(
+    (category?: string) => {
+      setError(null);
+
+      if (!searchQuery.trim() && (category ?? selectedCategory) === 'all') {
+        setError('Please enter a search term or select a category');
+        return;
+      }
+
+      // Build search params
+      const params = new URLSearchParams();
+      if (searchQuery.trim()) {
+        params.set('q', searchQuery.trim());
+      }
+      if ((category ?? selectedCategory) !== 'all') {
+        params.set('category', category ?? selectedCategory);
+      }
+
+      // Navigate to search page
+      router.push(`/search?${params.toString()}`);
+    }, [router, searchQuery, selectedCategory]);
+
+  const handleSearch = useCallback(
+    (category?: string) => {
+      navigateToSearch(category);
+    }, [navigateToSearch]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -54,27 +75,25 @@ export function SearchSection() {
     }
   };
 
-  const selectedCat = categories.find(cat => cat.value === selectedCategory);
-
   return (
-    <section className="relative py-16 px-6">
+    <section className="relative pb-16 px-6">
       {/* Background gradient */}
       <div className="absolute inset-0 gradient-mesh opacity-30" />
-      
+
       <div className="relative max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
-            <Sparkles className="w-4 h-4" />
-            Discover • Explore • Create
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gradient mb-4">
-            Find Your Perfect Repository
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Search through thousands of curated awesome lists and discover resources that will supercharge your development journey.
-          </p>
-        </div>
+        {/* <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
+              <Sparkles className="w-4 h-4" />
+              Discover • Explore • Create
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-gradient mb-4">
+              Find Your Perfect Repository
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Search through thousands of curated awesome lists and discover resources that will supercharge your development journey.
+            </p>
+          </div> */}
 
         {/* Search Interface */}
         <Card className="glass-strong border-0 p-8 mb-8">
@@ -97,7 +116,7 @@ export function SearchSection() {
                     onBlur={() => setIsFocused(false)}
                     className="pl-12 pr-4 py-4 text-lg bg-background/50 border-border/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 rounded-lg transition-all"
                   />
-                  
+
                   {/* Command shortcut */}
                   <div className="absolute right-4 hidden md:flex items-center gap-1 text-xs text-muted-foreground">
                     <kbd className="px-2 py-1 bg-muted rounded text-xs">⌘</kbd>
@@ -106,19 +125,23 @@ export function SearchSection() {
                 </div>
               </div>
 
+              {/* Error Message */}
+              {error && (
+                <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-sm">
+                  {error}
+                </div>
+              )}
+
               {/* Filters */}
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-muted-foreground mb-2">Category</label>
-                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <Select
+                    value={selectedCategory}
+                    onValueChange={setSelectedCategory}
+                  >
                     <SelectTrigger className="w-full bg-background/50 border-border/50">
                       <div className="flex items-center gap-2">
-                        {selectedCat && (
-                          <>
-                            <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${selectedCat.color}`} />
-                            <selectedCat.icon className="w-4 h-4" />
-                          </>
-                        )}
                         <SelectValue />
                       </div>
                     </SelectTrigger>
@@ -138,23 +161,13 @@ export function SearchSection() {
 
                 <div className="md:w-auto">
                   <label className="block text-sm font-medium text-muted-foreground mb-2 md:invisible">Action</label>
-                  <Button 
-                    onClick={handleSearch}
-                    disabled={isSearching}
+                  <Button
+                    onClick={() => handleSearch()}
                     size="lg"
                     className="w-full md:w-auto px-8 transition-all duration-300 group"
                   >
-                    {isSearching ? (
-                      <>
-                        <div className="animate-spin w-4 h-4 border-2 border-white/30 border-t-white rounded-full mr-2" />
-                        Searching...
-                      </>
-                    ) : (
-                      <>
-                        <Zap className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-                        Search
-                      </>
-                    )}
+                    <Zap className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                    Search
                   </Button>
                 </div>
               </div>
@@ -164,9 +177,9 @@ export function SearchSection() {
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-sm text-muted-foreground font-medium">Trending:</span>
                   {trendingSearches.slice(0, 4).map((search, index) => (
-                    <Badge 
+                    <Badge
                       key={search}
-                      variant="secondary" 
+                      variant="secondary"
                       className="cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors animate-float"
                       style={{ animationDelay: `${index * 0.1}s` }}
                       onClick={() => setSearchQuery(search)}
@@ -223,44 +236,6 @@ export function SearchSection() {
             </CommandPrimitive>
           </PopoverContent>
         </Popover>
-
-        {/* Search Results Loading */}
-        {isSearching && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-semibold text-gradient">Search Results</h3>
-              <div className="text-sm text-muted-foreground">Searching awesome repositories...</div>
-            </div>
-            
-            <div className="grid gap-4">
-              {[...Array(5)].map((_, i) => (
-                <Card key={i} className="glass-strong border-0 p-6">
-                  <CardContent className="p-0">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="space-y-2 flex-1">
-                        <Skeleton className="h-5 w-48" />
-                        <Skeleton className="h-4 w-32" />
-                      </div>
-                      <Skeleton className="h-8 w-8 rounded-full" />
-                    </div>
-                    <Skeleton className="h-4 w-full mb-2" />
-                    <Skeleton className="h-4 w-3/4 mb-4" />
-                    <div className="flex items-center justify-between">
-                      <div className="flex gap-2">
-                        <Skeleton className="h-6 w-16 rounded-full" />
-                        <Skeleton className="h-6 w-20 rounded-full" />
-                      </div>
-                      <div className="flex gap-4">
-                        <Skeleton className="h-4 w-12" />
-                        <Skeleton className="h-4 w-12" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </section>
   );

@@ -69,6 +69,7 @@ export class GitHubService {
     } = filters;
 
     let searchQuery = `${query} in:name OR ${query} in:description`;
+
     if (language) searchQuery += ` language:${language}`;
     if (topic) searchQuery += ` topic:${topic}`;
     if (minStars) searchQuery += ` stars:>=${minStars}`;
@@ -106,10 +107,10 @@ export class GitHubService {
     } catch (error: unknown) {
       console.error("Error searching GitHub repos:", error);
 
-      if (typeof error === "object" && error !== null && "status" in error) {
-        const httpError = error as { status?: number; message?: string };
+      if (error && typeof error === "object" && "status" in error) {
+        const httpError = error as { status: number; message: string };
 
-        if (httpError.status === 403 && httpError.message?.includes("rate limit")) {
+        if (httpError.status === 403 && httpError.message.includes("rate limit")) {
           console.warn("GitHub API rate limit exceeded. Consider adding a GITHUB_TOKEN.");
         } else if (httpError.status === 401) {
           console.warn("GitHub API authentication failed. Check your GITHUB_TOKEN.");
@@ -123,7 +124,7 @@ export class GitHubService {
   static async searchAwesomeReposWithMeta(
     filters: SearchFilters = {},
     page = 1,
-    perPage = 50,
+    perPage = 50
   ): Promise<SearchWithMetaResult> {
     const {
       query = "awesome",
@@ -137,6 +138,7 @@ export class GitHubService {
     } = filters;
 
     let searchQuery = `${query} in:name OR ${query} in:description`;
+
     if (language) searchQuery += ` language:${language}`;
     if (topic) searchQuery += ` topic:${topic}`;
     if (minStars) searchQuery += ` stars:>=${minStars}`;
@@ -187,8 +189,8 @@ export class GitHubService {
       let remaining: number | undefined;
       let reset: string | undefined;
 
-      if (typeof error === "object" && error !== null) {
-        const headers = (error as any)?.response?.headers;
+      if (error && typeof error === "object" && "response" in error && error.response) {
+        const headers = (error as { response?: { headers?: Record<string, string> } }).response?.headers;
         if (headers) {
           remaining = headers["x-ratelimit-remaining"] ? Number(headers["x-ratelimit-remaining"]) : undefined;
           reset = headers["x-ratelimit-reset"]
@@ -207,9 +209,13 @@ export class GitHubService {
 
   static async getRepoDetails(owner: string, repo: string): Promise<GitHubRepo | null> {
     try {
-      const response = await octokit.rest.repos.get({ owner, repo });
+      const response = await octokit.rest.repos.get({
+        owner,
+        repo,
+      });
+
       return response.data as GitHubRepo;
-    } catch (error: unknown) {
+    } catch (error) {
       console.error("Error fetching repo details:", error);
       return null;
     }
@@ -223,15 +229,19 @@ export class GitHubService {
         order: "desc",
         per_page: 30,
       });
+
       return response.data.items as GitHubRepo[];
-    } catch (error: unknown) {
+    } catch (error) {
       console.error("Error searching repos by topic:", error);
       return [];
     }
   }
 
   static async getTrendingAwesomeRepos(): Promise<GitHubRepo[]> {
-    return this.searchAwesomeRepos({ dateRange: "week", minStars: 10 });
+    return this.searchAwesomeRepos({
+      dateRange: "week",
+      minStars: 10,
+    });
   }
 
   static async getReposByCategory(category: string): Promise<GitHubRepo[]> {
@@ -245,13 +255,12 @@ export class GitHubService {
     };
 
     const topics = categoryTopics[category] || [category];
+
     const promises = topics.map((topic) => this.searchAwesomeRepos({ topic, minStars: 50 }));
     const results = await Promise.all(promises);
     const allRepos = results.flat();
 
-    const uniqueRepos = allRepos.filter(
-      (repo, index, self) => index === self.findIndex((r) => r.id === repo.id)
-    );
+    const uniqueRepos = allRepos.filter((repo, index, self) => index === self.findIndex((r) => r.id === repo.id));
 
     return uniqueRepos.sort((a, b) => b.stargazers_count - a.stargazers_count);
   }
@@ -274,9 +283,14 @@ export class GitHubService {
 
   static async getRepoContributors(owner: string, repo: string, page = 1, per_page = 30): Promise<GitHubContributor[]> {
     try {
-      const response = await octokit.rest.repos.listContributors({ owner, repo, page, per_page });
+      const response = await octokit.rest.repos.listContributors({
+        owner,
+        repo,
+        page,
+        per_page,
+      });
       return response.data as GitHubContributor[];
-    } catch (error: unknown) {
+    } catch (error) {
       console.error("Error fetching contributors:", error);
       return [];
     }
@@ -284,9 +298,15 @@ export class GitHubService {
 
   static async getRepoReadme(owner: string, repo: string): Promise<string | null> {
     try {
-      const response = await octokit.rest.repos.getReadme({ owner, repo });
+      const response = await octokit.rest.repos.getReadme({
+        owner,
+        repo,
+      });
       const { content, encoding } = response.data as GitHubReadme;
-      if (encoding === "base64") return Buffer.from(content, "base64").toString("utf-8");
+
+      if (encoding === "base64") {
+        return Buffer.from(content, "base64").toString("utf-8");
+      }
       return null;
     } catch {
       console.warn(`No README found for ${owner}/${repo}`);
@@ -298,6 +318,7 @@ export class GitHubService {
     try {
       const repoData = await this.getRepoDetails(owner, repo);
       if (!repoData || !repoData.topics?.length) return [];
+
       const mainTopic = repoData.topics[0];
       return await this.searchAwesomeReposByTopic(mainTopic);
     } catch {

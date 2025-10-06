@@ -1,6 +1,5 @@
 import { Octokit } from "@octokit/rest"
 
-
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN, // Will work without token (lower rate limits)
 })
@@ -20,8 +19,7 @@ export interface GitHubRepo {
   owner: {
     login: string
     avatar_url: string
-      html_url: string
-
+    html_url: string
   }
 }
 
@@ -35,6 +33,7 @@ export interface SearchFilters {
   order?: "desc" | "asc"
   dateRange?: "day" | "week" | "month" | "year"
 }
+
 export interface GitHubContributor {
   login: string
   avatar_url: string
@@ -47,8 +46,17 @@ export interface GitHubReadme {
   encoding: string
 }
 
+export interface SearchWithMetaResult {
+  items: GitHubRepo[]
+  totalCount: number
+  rate?: {
+    remaining?: number
+    reset?: string
+  }
+}
+
 export class GitHubService {
-  static async searchAwesomeRepos(filters: SearchFilters = {}, page = 1, perPage = 50): Promise<GitHubRepo[]> {
+  static async searchAwesomeRepos(filters: SearchFilters = {}, page = 1): Promise<GitHubRepo[]> {
     const {
       query = "awesome",
       language,
@@ -92,7 +100,7 @@ export class GitHubService {
         q: searchQuery,
         sort,
         order,
-        per_page: perPage,
+        per_page: 50,
         page,
       })
 
@@ -112,6 +120,85 @@ export class GitHubService {
       }
 
       return []
+    }
+  }
+
+  static async searchAwesomeReposWithMeta(
+    filters: SearchFilters = {},
+    page = 1,
+    perPage = 50,
+  ): Promise<SearchWithMetaResult> {
+    const {
+      query = "awesome",
+      language,
+      topic,
+      minStars,
+      minForks,
+      sort = "stars",
+      order = "desc",
+      dateRange,
+    } = filters
+
+    let searchQuery = `${query} in:name OR ${query} in:description`
+
+    if (language) searchQuery += ` language:${language}`
+    if (topic) searchQuery += ` topic:${topic}`
+    if (minStars) searchQuery += ` stars:>=${minStars}`
+    if (minForks) searchQuery += ` forks:>=${minForks}`
+
+    if (dateRange) {
+      const date = new Date()
+      switch (dateRange) {
+        case "day":
+          date.setDate(date.getDate() - 1)
+          break
+        case "week":
+          date.setDate(date.getDate() - 7)
+          break
+        case "month":
+          date.setMonth(date.getMonth() - 1)
+          break
+        case "year":
+          date.setFullYear(date.getFullYear() - 1)
+          break
+      }
+      searchQuery += ` pushed:>${date.toISOString().split("T")[0]}`
+    }
+
+    try {
+      const response = await octokit.rest.search.repos({
+        q: searchQuery,
+        sort,
+        order,
+        per_page: perPage,
+        page,
+      })
+
+      const totalCount = response.data.total_count ?? 0
+      return {
+        items: response.data.items as GitHubRepo[],
+        totalCount,
+        rate: {
+          remaining: Number(response.headers["x-ratelimit-remaining"] ?? undefined),
+          reset: response.headers["x-ratelimit-reset"]
+            ? new Date(Number(response.headers["x-ratelimit-reset"]) * 1000).toISOString()
+            : undefined,
+        },
+      }
+    } catch (error: any) {
+      console.error("Error searching GitHub repos (with meta):", error)
+
+      // Try to surface rate-limit info from error response headers
+      const remaining = error?.response?.headers?.["x-ratelimit-remaining"]
+      const reset = error?.response?.headers?.["x-ratelimit-reset"]
+        ? new Date(Number(error.response.headers["x-ratelimit-reset"]) * 1000).toISOString()
+        : undefined
+
+      return {
+        items: [],
+        totalCount: 0,
+        rate: { remaining: remaining ? Number(remaining) : undefined, reset },
+      }
     }
   }
 
@@ -193,13 +280,9 @@ export class GitHubService {
       .sort((a, b) => b.count - a.count)
       .slice(0, 20)
   }
-   /** Fetch repo contributors (paginated) */
-  static async getRepoContributors(
-    owner: string,
-    repo: string,
-    page: number = 1,
-    per_page: number = 30
-  ): Promise<GitHubContributor[]> {
+
+  // Fetch repo contributors (paginated)
+  static async getRepoContributors(owner: string, repo: string, page = 1, per_page = 30): Promise<GitHubContributor[]> {
     try {
       const response = await octokit.rest.repos.listContributors({
         owner,
@@ -209,12 +292,12 @@ export class GitHubService {
       })
       return response.data as GitHubContributor[]
     } catch (error) {
-      console.error('Error fetching contributors:', error)
+      console.error("Error fetching contributors:", error)
       return []
     }
   }
 
-  // /** Fetch repo README (raw markdown base64) */
+  // Fetch repo README (raw markdown base64)
   static async getRepoReadme(owner: string, repo: string): Promise<string | null> {
     try {
       const response = await octokit.rest.repos.getReadme({
@@ -222,9 +305,9 @@ export class GitHubService {
         repo,
       })
       const { content, encoding } = response.data as GitHubReadme
-   
-      if (encoding === 'base64') {
-        return Buffer.from(content, 'base64').toString('utf-8')
+
+      if (encoding === "base64") {
+        return Buffer.from(content, "base64").toString("utf-8")
       }
       return null
     } catch {
@@ -233,8 +316,7 @@ export class GitHubService {
     }
   }
 
-
-  /** Fetch related repositories by first topic */
+  // Fetch related repositories by first topic
   static async getRelatedRepos(owner: string, repo: string) {
     try {
       const repoData = await this.getRepoDetails(owner, repo)
@@ -244,7 +326,7 @@ export class GitHubService {
       const mainTopic = repoData.topics[0]
       return await this.searchAwesomeReposByTopic(mainTopic)
     } catch {
-      console.error('Error fetching related repos')
+      console.error("Error fetching related repos")
       return []
     }
   }

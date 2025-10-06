@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { SearchResults } from "@/components/search-results"
-import { GitHubService, type GitHubRepo as Repository, type SearchFilters } from "@/lib/github"
+import type { GitHubRepo as Repository } from "@/lib/github"
 
 const categories = [
   { value: "all", label: "All Categories" },
@@ -24,8 +24,6 @@ const categories = [
   { value: "go", label: "Go" },
   { value: "rust", label: "Rust" },
 ]
-
-const PER_PAGE = 10
 
 function SearchPageContent() {
   const searchParams = useSearchParams()
@@ -41,7 +39,9 @@ function SearchPageContent() {
   const [hasMore, setHasMore] = useState(false)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
 
-  const searchRepositories = async (query: string, category: string, page = 1, append = false) => {
+  const PER_PAGE = 10
+
+  const searchRepositories = async (query: string, category: string, page = 1, append = false, allowEmpty = false) => {
     try {
       if (page === 1) {
         setIsSearching(true)
@@ -50,45 +50,52 @@ function SearchPageContent() {
         setIsLoadingMore(true)
       }
 
-      const filters: SearchFilters = {
-        query: query.trim() || "awesome",
+      if (!allowEmpty && !query.trim() && category === "all") {
+        setError("Please enter a search term or select a category")
+        return
       }
 
-      // Category mapping
-      if (category && category !== "all") {
-        const categoryTopicMap: Record<string, string> = {
-          javascript: "javascript",
-          python: "python",
-          react: "react",
-          "machine-learning": "machine-learning",
-          security: "security",
-          devops: "devops",
-          css: "css",
-          go: "go",
-          rust: "rust",
-        }
+      const params = new URLSearchParams()
+      if (query.trim()) params.set("q", query.trim())
+      if (category && category !== "all") params.set("category", category)
+      params.set("page", String(page))
+      params.set("per_page", String(PER_PAGE))
 
-        if (categoryTopicMap[category]) {
-          filters.topic = categoryTopicMap[category]
-        }
+      const res = await fetch(`/api/search?${params.toString()}`, { method: "GET" })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        const msg =
+          data?.error ||
+          (res.status === 429
+            ? "GitHub rate limit hit. Please wait a bit before loading more."
+            : "Failed to search repositories")
+        throw new Error(msg)
       }
 
-      const repos: Repository[] = await GitHubService.searchAwesomeRepos(filters, page, PER_PAGE)
+      const data = await res.json()
+      const repos: Repository[] = data.items ?? []
 
       if (append && page > 1) {
-        setSearchResults((prev) => [...prev, ...repos])
+        setSearchResults((prev) => {
+          const map = new Map<number, Repository>()
+          prev.forEach((r) => map.set(r.id, r))
+          repos.forEach((r) => {
+            if (!map.has(r.id)) map.set(r.id, r)
+          })
+          return Array.from(map.values())
+        })
       } else {
         setSearchResults(repos)
       }
 
       setCurrentPage(page)
-      setHasMore(repos.length === PER_PAGE)
+      setHasMore(Boolean(data.hasMore))
       setHasSearched(true)
       setError(null)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to search repositories"
       setError(errorMessage)
-      console.error("Search error:", err)
+      console.error("[v0] Search error:", err)
     } finally {
       setIsSearching(false)
       setIsLoadingMore(false)
@@ -101,7 +108,6 @@ function SearchPageContent() {
       return
     }
 
-    // Update URL params
     const params = new URLSearchParams()
     if (searchQuery.trim()) params.set("q", searchQuery.trim())
     if (selectedCategory !== "all") params.set("category", selectedCategory)
@@ -125,7 +131,6 @@ function SearchPageContent() {
     }
   }
 
-  // Search on page load if query params exist
   useEffect(() => {
     const query = searchParams.get("q")
     const category = searchParams.get("category") || "all"
@@ -133,7 +138,11 @@ function SearchPageContent() {
     setSearchQuery(query || "")
     setSelectedCategory(category)
 
-    searchRepositories(query || "", category)
+    if (query || category !== "all") {
+      searchRepositories(query || "", category)
+    } else {
+      searchRepositories("", "all", 1, false, true)
+    }
   }, [searchParams])
 
   return (
@@ -204,25 +213,15 @@ function SearchPageContent() {
 
           {/* Results */}
           <div className="lg:col-span-3">
-            {hasSearched ? (
-              <SearchResults
-                results={searchResults}
-                isLoading={isSearching}
-                hasMore={hasMore}
-                isLoadingMore={isLoadingMore}
-                onLoadMore={handleLoadMore}
-                searchQuery={searchQuery}
-                category={selectedCategory}
-              />
-            ) : (
-              <div className="text-center py-12">
-                <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">Start Your Search</h3>
-                <p className="text-muted-foreground">
-                  Enter a search term and click search to find awesome repositories
-                </p>
-              </div>
-            )}
+            <SearchResults
+              results={searchResults}
+              isLoading={isSearching}
+              hasMore={hasMore}
+              isLoadingMore={isLoadingMore}
+              onLoadMore={handleLoadMore}
+              searchQuery={searchQuery}
+              category={selectedCategory}
+            />
           </div>
         </div>
       </div>

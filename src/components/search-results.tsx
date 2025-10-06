@@ -3,7 +3,7 @@
 import { Star, GitFork, ExternalLink, Calendar, Loader2, Package } from "lucide-react"
 import { formatNumber, formatDate } from "@/lib/utils"
 import type { GitHubRepo as Repository } from "@/lib/github"
-import { useEffect, useRef } from "react"
+import { useEffect, useMemo, useRef } from "react"
 
 interface SearchResultsProps {
   results: Repository[]
@@ -24,6 +24,38 @@ export function SearchResults({
   searchQuery,
   category,
 }: SearchResultsProps) {
+  const sentinelRef = useRef<HTMLDivElement | null>(null)
+
+  const uniqueResults = useMemo(() => {
+    const map = new Map<number, Repository>()
+    for (const r of results) {
+      if (!map.has(r.id)) map.set(r.id, r)
+    }
+    return Array.from(map.values())
+  }, [results])
+
+  useEffect(() => {
+    const el = sentinelRef.current
+    if (!el) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && hasMore && !isLoading && !isLoadingMore) {
+            onLoadMore()
+          }
+        }
+      },
+      {
+        rootMargin: "800px 0px 800px 0px",
+        threshold: 0,
+      },
+    )
+
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [hasMore, isLoading, isLoadingMore, onLoadMore])
+
   const getLanguageColor = (language: string | null) => {
     const colors: { [key: string]: string } = {
       JavaScript: "bg-yellow-500",
@@ -47,31 +79,6 @@ export function SearchResults({
     }
     return colors[language || ""] || "bg-gray-500"
   }
-
-  const sentinelRef = useRef<HTMLDivElement | null>(null)
-
-  useEffect(() => {
-    if (!hasMore) return
-
-    const el = sentinelRef.current
-    if (!el) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0]
-        if (entry.isIntersecting && !isLoadingMore) {
-          onLoadMore()
-        }
-      },
-      { root: null, rootMargin: "200px 0px", threshold: 0 },
-    )
-
-    observer.observe(el)
-    return () => {
-      observer.unobserve(el)
-      observer.disconnect()
-    }
-  }, [hasMore, isLoadingMore, onLoadMore])
 
   if (isLoading) {
     return (
@@ -126,7 +133,7 @@ export function SearchResults({
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Search Results</h2>
           <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-            <span>Found {results.length} repositories</span>
+            <span>Found {uniqueResults.length} repositories</span>
             {searchQuery && (
               <>
                 <span>•</span>
@@ -142,7 +149,7 @@ export function SearchResults({
           </div>
         </div>
 
-        {results.length === 0 ? (
+        {uniqueResults.length === 0 ? (
           <div className="text-center py-12">
             <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No repositories found</h3>
@@ -153,7 +160,7 @@ export function SearchResults({
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {results.map((repo) => (
+              {uniqueResults.map((repo) => (
                 <div
                   key={repo.id}
                   className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-200 group"
@@ -225,13 +232,14 @@ export function SearchResults({
               ))}
             </div>
 
-            <div className="text-center">
-              {hasMore && <div ref={sentinelRef} className="h-1 w-full" aria-hidden />}
-              {hasMore && (
+            {hasMore && <div ref={sentinelRef} aria-hidden="true" className="h-px w-full" />}
+
+            {hasMore && (
+              <div className="text-center mt-4" aria-live="polite" aria-busy={isLoadingMore}>
                 <button
                   onClick={onLoadMore}
                   disabled={isLoadingMore}
-                  className="px-8 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto mt-2"
+                  className="px-8 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
                 >
                   {isLoadingMore ? (
                     <>
@@ -242,13 +250,8 @@ export function SearchResults({
                     "Load More Repositories"
                   )}
                 </button>
-              )}
-              {!hasMore && results.length > 0 && (
-                <p className="text-muted-foreground text-sm mt-4" role="status" aria-live="polite">
-                  You’ve reached the end of the results.
-                </p>
-              )}
-            </div>
+              </div>
+            )}
           </>
         )}
       </div>

@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { useBookmarks } from '@/hooks/useBookmarks'
 import { Squash as Hamburger } from "hamburger-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ModeToggle } from './ui/mode';
 
 
 const navigation = [
@@ -63,8 +64,11 @@ export function Header() {
             })}
           </nav>
 
+          
+
           {/* Actions */}
           <div className="flex items-center gap-3">
+          <ModeToggle/>
             {/* Command shortcut hint */}
             <div className="text-muted-foreground bg-muted/50 hidden items-center gap-1 rounded-md px-2 py-1 text-xs lg:flex">
               <Command className="h-3 w-3" />

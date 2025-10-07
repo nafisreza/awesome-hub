@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server'
-import { GitHubService } from '@/lib/github'
-import { cacheFirst } from '@/lib/cache'
+import { NextResponse } from 'next/server';
+import { GitHubService } from '@/lib/github';
+import { cacheFirst } from '@/lib/cache';
 
 export async function GET() {
   try {
@@ -12,21 +12,18 @@ export async function GET() {
         const allRepos = await GitHubService.searchAwesomeRepos({
           minStars: 1000, // Only high-quality repos
           sort: 'stars',
-          order: 'desc'
-        })
-        
+          order: 'desc',
+        });
+
         // Return top 6 for featured section
-        return allRepos.slice(0, 6)
+        return allRepos.slice(0, 6);
       },
       30 // 30 minutes cache
-    )
+    );
 
-    return NextResponse.json(repos)
+    return NextResponse.json(repos);
   } catch (error) {
-    console.error('Featured repos error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch featured repositories' },
-      { status: 500 }
-    )
+    console.error('Featured repos error:', error);
+    return NextResponse.json({ error: 'Failed to fetch featured repositories' }, { status: 500 });
   }
 }

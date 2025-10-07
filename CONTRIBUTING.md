@@ -180,6 +180,7 @@ export function ComponentName({ prop1, prop2 }: ComponentNameProps) {
 
 1. **Test your changes**
    ```bash
+   npm run format
    npm run lint
    npm run type-check
    npm run build

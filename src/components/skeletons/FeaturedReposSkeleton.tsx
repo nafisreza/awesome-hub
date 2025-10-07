@@ -1,35 +1,30 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function FeaturedReposSkeleton() {
   return (
-    <section className='mb-16'>
-      <h2 className='text-3xl font-bold text-center mb-8'>
-        Featured Repositories
-      </h2>
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+    <section className="mb-16">
+      <h2 className="mb-8 text-center text-3xl font-bold">Featured Repositories</h2>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {[...Array(6)].map((_, i) => (
-          <div
-            key={i}
-            className='bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg'
-          >
-            <Skeleton className='h-5 w-3/4 mb-2' />
-            <Skeleton className='h-3 w-1/2 mb-4' />
-            <Skeleton className='h-3 w-full mb-2' />
-            <Skeleton className='h-3 w-5/6 mb-4' />
-            <div className='flex gap-2 mb-4'>
-              <Skeleton className='h-5 w-12 rounded-full' />
-              <Skeleton className='h-5 w-16 rounded-full' />
-              <Skeleton className='h-5 w-10 rounded-full' />
+          <div key={i} className="rounded-xl bg-white p-6 shadow-lg dark:bg-slate-800">
+            <Skeleton className="mb-2 h-5 w-3/4" />
+            <Skeleton className="mb-4 h-3 w-1/2" />
+            <Skeleton className="mb-2 h-3 w-full" />
+            <Skeleton className="mb-4 h-3 w-5/6" />
+            <div className="mb-4 flex gap-2">
+              <Skeleton className="h-5 w-12 rounded-full" />
+              <Skeleton className="h-5 w-16 rounded-full" />
+              <Skeleton className="h-5 w-10 rounded-full" />
             </div>
-            <div className='flex justify-between items-center'>
-              <div className='flex gap-4'>
-                <Skeleton className='h-3 w-10' />
-                <Skeleton className='h-3 w-10' />
+            <div className="flex items-center justify-between">
+              <div className="flex gap-4">
+                <Skeleton className="h-3 w-10" />
+                <Skeleton className="h-3 w-10" />
               </div>
-              <Skeleton className='h-3 w-12' />
+              <Skeleton className="h-3 w-12" />
             </div>
-            <div className='mt-3 pt-3 border-t border-gray-200 dark:border-gray-700'>
-              <Skeleton className='h-3 w-20' />
+            <div className="mt-3 border-t border-gray-200 pt-3 dark:border-gray-700">
+              <Skeleton className="h-3 w-20" />
             </div>
           </div>
         ))}

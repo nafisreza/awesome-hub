@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { GitHubRepo } from "@/lib/github";
-import { useState, useMemo } from "react";
-import { Star, GitFork } from "lucide-react"; 
-import { getLanguageColor } from "@/lib/utils";
+import Link from 'next/link';
+import { GitHubRepo } from '@/lib/github';
+import { useState, useMemo } from 'react';
+import { Star, GitFork } from 'lucide-react';
+import { getLanguageColor } from '@/lib/utils';
 
 const REPOS_PER_PAGE = 5;
 
@@ -19,30 +19,30 @@ export default function RelatedRepos({ repos }: { repos: GitHubRepo[] }) {
   const hasMore = reposToShow.length < repos.length;
 
   const handleLoadMore = () => {
-    setCurrentPage(prev => prev + 1);
+    setCurrentPage((prev) => prev + 1);
   };
 
   return (
-    <div className="bg-card rounded-xl p-6 space-y-4 border">
-      <h2 className="text-lg font-semibold text-foreground">Related Repositories</h2>
-      
+    <div className="bg-card space-y-4 rounded-xl border p-6">
+      <h2 className="text-foreground text-lg font-semibold">Related Repositories</h2>
+
       <div className="space-y-3">
         {reposToShow.map((r) => (
           <Link
             key={r.id}
             href={`/repo/${r.owner.login}/${r.name}`}
-            className="block p-4 rounded-lg hover:bg-muted/50 transition-colors duration-200 border border-transparent hover:border-border group"
+            className="hover:bg-muted/50 hover:border-border group block rounded-lg border border-transparent p-4 transition-colors duration-200"
           >
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-1">
+            <div className="mb-1 flex flex-col justify-between sm:flex-row sm:items-center">
               {/* Repository Name */}
-              <h3 className="font-semibold text-blue-500 group-hover:text-blue-600 text-sm sm:text-base md:text-lg truncate pr-2">
+              <h3 className="truncate pr-2 text-sm font-semibold text-blue-500 group-hover:text-blue-600 sm:text-base md:text-lg">
                 {r.owner.login}/<span className="font-bold">{r.name}</span>
               </h3>
 
               {/* Stars Count */}
               {r.stargazers_count > 0 && (
-                <span className="flex items-center text-gray-400 text-xs sm:text-sm gap-1 mt-1 sm:mt-0 flex-shrink-0">
-                  <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400" />
+                <span className="mt-1 flex flex-shrink-0 items-center gap-1 text-xs text-gray-400 sm:mt-0 sm:text-sm">
+                  <Star className="h-3 w-3 text-yellow-400 sm:h-4 sm:w-4" />
                   {r.stargazers_count.toLocaleString()}
                 </span>
               )}
@@ -50,17 +50,17 @@ export default function RelatedRepos({ repos }: { repos: GitHubRepo[] }) {
 
             {/* Description */}
             {r.description && (
-              <p className="text-gray-400 text-xs sm:text-sm md:text-base mt-0.5 line-clamp-2 leading-tight">
+              <p className="mt-0.5 line-clamp-2 text-xs leading-tight text-gray-400 sm:text-sm md:text-base">
                 {r.description}
               </p>
             )}
 
             {/* Language and Forks */}
-            <div className="flex flex-wrap items-center gap-4 mt-2 text-gray-500 text-xs sm:text-sm">
+            <div className="mt-2 flex flex-wrap items-center gap-4 text-xs text-gray-500 sm:text-sm">
               {r.language && (
                 <span className="flex items-center gap-1">
                   <span
-                    className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full"
+                    className="h-2.5 w-2.5 rounded-full sm:h-3 sm:w-3"
                     style={{ backgroundColor: getLanguageColor(r.language) }}
                   ></span>
                   {r.language}
@@ -68,7 +68,7 @@ export default function RelatedRepos({ repos }: { repos: GitHubRepo[] }) {
               )}
               {r.forks_count > 0 && (
                 <span className="flex items-center gap-1">
-                  <GitFork className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <GitFork className="h-3 w-3 sm:h-4 sm:w-4" />
                   {r.forks_count.toLocaleString()}
                 </span>
               )}
@@ -82,7 +82,7 @@ export default function RelatedRepos({ repos }: { repos: GitHubRepo[] }) {
         <div className="pt-2">
           <button
             onClick={handleLoadMore}
-            className="w-full text-center text-sm sm:text-base font-medium text-blue-400 hover:text-blue-300 py-1 transition-colors"
+            className="w-full py-1 text-center text-sm font-medium text-blue-400 transition-colors hover:text-blue-300 sm:text-base"
           >
             Load More (Showing {reposToShow.length} of {repos.length})
           </button>
@@ -91,4 +91,3 @@ export default function RelatedRepos({ repos }: { repos: GitHubRepo[] }) {
     </div>
   );
 }
-

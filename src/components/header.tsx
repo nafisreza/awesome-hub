@@ -1,12 +1,14 @@
 'use client';
 
-import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { Star, BookOpen, Menu, Github, Zap, Sparkles, Search, Command } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { useBookmarks } from '@/hooks/useBookmarks';
+import Link from 'next/link'
+import { useState, useEffect } from 'react'
+import { Star, BookOpen, Menu, Github, Zap, Sparkles, Search, Command } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { useBookmarks } from '@/hooks/useBookmarks'
+import { Squash as Hamburger } from "hamburger-react";
+import { motion, AnimatePresence } from "framer-motion";
+
 
 const navigation = [
   { name: 'Explore', href: '/', icon: Search },
@@ -104,26 +106,20 @@ export function Header() {
             </Button>
 
             {/* Mobile Menu */}
-            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="sm" className="md:hidden">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="glass-strong w-72">
-                <div className="flex h-full flex-col">
-                  {/* Mobile Header */}
-                  <div className="border-border/50 flex items-center justify-between border-b pb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="from-primary to-accent rounded-lg bg-gradient-to-r p-2">
-                        <BookOpen className="h-4 w-4 text-white" />
-                      </div>
-                      <span className="text-gradient font-bold">AwesomeHub</span>
-                    </div>
-                  </div>
-
+            <div className='lg:hidden'>
+            <Hamburger toggled={isMobileMenuOpen} size={20} toggle={setIsMobileMenuOpen} />
+              { isMobileMenuOpen && 
+              <>
+               <motion.div
+                  key="mobile-menu"
+                  initial={{ opacity: 0, y: -15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  className="fixed left-0 right-0 top-[4rem] p-5 pt-0 bg-white border-b border-b-white/20 shadow-4xl z-50"
+                >
                   {/* Mobile Navigation */}
-                  <nav className="flex flex-col gap-2 py-6">
+                  <nav className="flex flex-col gap-2 py-2">
                     {navigation.map((item) => {
                       const IconComponent = item.icon;
                       return (
@@ -161,9 +157,10 @@ export function Header() {
                       </a>
                     </Button>
                   </div>
-                </div>
-              </SheetContent>
-            </Sheet>
+                </motion.div>
+              </>
+              }
+            </div>
           </div>
         </div>
       </div>

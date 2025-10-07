@@ -9,7 +9,7 @@ export default function Home() {
     <div className="bg-background min-h-screen">
       <Header />
       {/* Add top padding to account for fixed header */}
-      <main className="pt-16">
+      <main className="">
         <HeroSection />
         <SearchSection />
         <div className="container mx-auto px-4 lg:px-6">

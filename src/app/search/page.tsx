@@ -12,15 +12,18 @@ import { GitHubService, type GitHubRepo as Repository, type SearchFilters } from
 
 const categories = [
   { value: 'all', label: 'All Categories' },
-  { value: 'javascript', label: 'JavaScript' },
-  { value: 'python', label: 'Python' },
-  { value: 'react', label: 'React' },
-  { value: 'machine-learning', label: 'Machine Learning' },
+  { value: 'frontend', label: 'Frontend Development' },
+  { value: 'backend', label: 'Backend Development' },
+  { value: 'mobile', label: 'Mobile Development' },
+  { value: 'ai-ml', label: 'AI & Machine Learning' },
+  { value: 'devops', label: 'DevOps & Infrastructure' },
+  { value: 'database', label: 'Databases' },
   { value: 'security', label: 'Security' },
-  { value: 'devops', label: 'DevOps' },
-  { value: 'css', label: 'CSS' },
-  { value: 'go', label: 'Go' },
-  { value: 'rust', label: 'Rust' },
+  { value: 'web3', label: 'Web3 & Blockchain' },
+  { value: 'system-programming', label: 'System Programming' },
+  { value: 'tools', label: 'Developer Tools' },
+  { value: 'design', label: 'Design & UI/UX' },
+  { value: 'games', label: 'Game Development' },
 ];
 
 function SearchPageContent() {
@@ -55,23 +58,22 @@ function SearchPageContent() {
         query: query.trim() || 'awesome',
       };
 
-      // Category mapping
+      // Category mapping - use the category-based search from GitHub service
       if (category && category !== 'all') {
-        const categoryTopicMap: Record<string, string> = {
-          javascript: 'javascript',
-          python: 'python',
-          react: 'react',
-          'machine-learning': 'machine-learning',
-          security: 'security',
-          devops: 'devops',
-          css: 'css',
-          go: 'go',
-          rust: 'rust',
-        };
-
-        if (categoryTopicMap[category]) {
-          filters.topic = categoryTopicMap[category];
+        // Use the category-based search which handles multiple topics
+        const categoryRepos = await GitHubService.getReposByCategory(category);
+        
+        if (append && page > 1) {
+          setSearchResults((prev) => [...prev, ...categoryRepos.slice((page - 1) * 50, page * 50)]);
+        } else {
+          setSearchResults(categoryRepos.slice(0, 50));
         }
+        
+        setCurrentPage(page);
+        setHasMore(categoryRepos.length > page * 50);
+        setHasSearched(true);
+        setError(null);
+        return;
       }
 
       const repos: Repository[] = await GitHubService.searchAwesomeRepos(filters, page);

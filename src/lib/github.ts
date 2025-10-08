@@ -150,6 +150,22 @@ export class GitHubService {
     });
   }
 
+  // Enhanced trending repos with better filtering
+  static async getTrendingReposByTimeRange(timeRange: 'day' | 'week' | 'month'): Promise<GitHubRepo[]> {
+    const minStarsMap = {
+      day: 5,
+      week: 10,
+      month: 50,
+    };
+
+    return this.searchAwesomeRepos({
+      dateRange: timeRange,
+      minStars: minStarsMap[timeRange],
+      sort: 'updated',
+      order: 'desc',
+    });
+  }
+
   // Get repos by specific categories (predefined topic combinations)
   static async getReposByCategory(category: string): Promise<GitHubRepo[]> {
     const categoryTopics: Record<string, string[]> = {

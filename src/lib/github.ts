@@ -191,6 +191,29 @@ export class GitHubService {
       .sort((a, b) => b.count - a.count)
       .slice(0, 20);
   }
+
+  /** Fetch all contributors for the AwesomeHub project with simple pagination */
+  static async getProjectContributors(): Promise<GitHubContributor[]> {
+    const owner = 'nafisreza'
+    const repo = 'awesome-hub'
+    try {
+      const perPage = 100
+      // Fetch first two pages to cover up to 200 contributors
+      const [page1, page2] = await Promise.all([
+        this.getRepoContributors(owner, repo, 1, perPage),
+        this.getRepoContributors(owner, repo, 2, perPage),
+      ])
+
+      // Combine and de-duplicate by login
+      const combined = [...page1, ...page2]
+      const unique = combined.filter((c, idx, arr) => idx === arr.findIndex(x => x.login === c.login))
+      return unique
+    } catch (error) {
+      console.error('Error fetching project contributors:', error)
+      return []
+    }
+  }
+
   /** Fetch repo contributors (paginated) */
   static async getRepoContributors(
     owner: string,

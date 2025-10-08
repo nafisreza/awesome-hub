@@ -1,8 +1,9 @@
-import { SearchSection } from '@/components/search-section';
-import { HeroSection } from '@/components/hero-section';
-import { FeaturedRepos } from '@/components/featured-repos';
-import { StatsSection } from '@/components/stats-section';
-import { Header } from '@/components/header';
+import { SearchSection } from "@/components/search-section";
+import { HeroSection } from "@/components/hero-section";
+import { FeaturedRepos } from "@/components/featured-repos";
+import { StatsSection } from "@/components/stats-section";
+import { ContributorsSection } from "@/components/contributors-section";
+import { Header } from "@/components/header";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
           <FeaturedRepos />
         </div>
         <StatsSection />
+        <ContributorsSection />
         {/* Footer spacer */}
         <div className="h-20" />
       </main>

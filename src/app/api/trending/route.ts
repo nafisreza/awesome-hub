@@ -129,10 +129,13 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error('Error in trending API:', error);
     
-    // Return empty data in case of API errors (like rate limiting)
+    // Check if it's a rate limit error
+    const isRateLimited = error && typeof error === 'object' && 'status' in error && error.status === 403;
+    const hasToken = !!process.env.GITHUB_TOKEN;
+    
     return NextResponse.json(
       { 
-        error: 'Failed to fetch trending repositories',
+        error: isRateLimited ? 'GitHub API rate limit exceeded' : 'Failed to fetch trending repositories',
         repositories: [],
         stats: {
           totalRepositories: 0,
@@ -141,8 +144,11 @@ export async function GET(request: Request) {
           topLanguages: [],
         },
         lastUpdated: new Date().toISOString(),
+        rateLimited: isRateLimited,
+        authenticated: hasToken,
+        suggestion: !hasToken ? 'Add GITHUB_TOKEN environment variable for higher rate limits' : undefined,
       },
-      { status: 500 }
+      { status: isRateLimited ? 429 : 500 }
     );
   }
 }

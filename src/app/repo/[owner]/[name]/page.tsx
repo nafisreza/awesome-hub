@@ -56,6 +56,13 @@ export async function generateMetadata({
         locale: 'en_US',
         type: 'website',
       },
+      twitter: {
+        card: 'summary_large_image',
+        title: title,
+        description: description,
+        images: [imageUrl],
+        creator: `@${repo.owner.login}`,
+      },
       keywords: [
         repo.name,
         repo.owner.login,

@@ -2,7 +2,7 @@ import { GitHubRepo } from '@/lib/github';
 import Image from 'next/image';
 import { Heart, GitFork, Star } from 'lucide-react';
 import Link from 'next/link';
-import { ShareButtons } from '@/components/ui/share-buttons';
+import { ShareButtons } from '@/components/share-buttons';
 
 interface Props {
   repo: GitHubRepo;

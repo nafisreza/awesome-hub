@@ -2,12 +2,12 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Star, BookOpen, Menu, Github, Zap, Sparkles, Search, Command } from 'lucide-react'
+import { Star, Github, Zap, Sparkles, Search, Command } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useBookmarks } from '@/hooks/useBookmarks'
 import { Squash as Hamburger } from "hamburger-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { ModeToggle } from './ui/mode';
 
 
@@ -15,7 +15,6 @@ const navigation = [
   { name: 'Explore', href: '/', icon: Search },
   { name: 'Categories', href: '/categories', icon: Zap },
   { name: 'Trending', href: '/trending', icon: Sparkles },
-  { name: 'About', href: '/about', icon: BookOpen },
 ];
 
 export function Header() {
@@ -69,12 +68,6 @@ export function Header() {
           {/* Actions */}
           <div className="flex items-center gap-3">
           <ModeToggle/>
-            {/* Command shortcut hint */}
-            <div className="text-muted-foreground bg-muted/50 hidden items-center gap-1 rounded-md px-2 py-1 text-xs lg:flex">
-              <Command className="h-3 w-3" />
-              <span>⌘K</span>
-            </div>
-
             {/* GitHub Link */}
             <Button variant="ghost" size="sm" asChild className="hover:bg-accent/50 hidden sm:flex">
               <a

@@ -2,6 +2,7 @@ import { GitHubRepo } from '@/lib/github';
 import Image from 'next/image';
 import { Heart, GitFork, Star } from 'lucide-react';
 import Link from 'next/link';
+import { ShareButtons } from '@/components/ui/share-buttons';
 
 interface Props {
   repo: GitHubRepo;
@@ -20,7 +21,6 @@ export default function RepoActionBar({ repo }: Props) {
       {/* Left Side: Avatar & Repo Info */}
       <div className="flex w-full flex-col gap-2 md:w-auto md:flex-row md:items-center md:gap-3">
         <Image src={repo.owner.avatar_url} alt={repo.owner.login} width={40} height={40} className="rounded-full" />
-
         <div className="flex flex-col gap-1 truncate sm:flex-row sm:items-center sm:gap-2">
           <h1 className="truncate text-lg font-semibold sm:text-xl md:text-2xl">
             <Link href={repo.owner.html_url} className="truncate hover:text-blue-600">
@@ -31,7 +31,6 @@ export default function RepoActionBar({ repo }: Props) {
               {repo.name}
             </Link>
           </h1>
-
           {/* Public Badge */}
           <span className="text-muted-foreground border-border w-fit rounded-full border px-2 py-0.5 text-xs font-medium whitespace-nowrap">
             Public
@@ -68,6 +67,9 @@ export default function RepoActionBar({ repo }: Props) {
             {formatCount(repo.stargazers_count)}
           </button>
         </div>
+
+        {/* Share Button */}
+        <ShareButtons repo={repo} />
       </div>
     </div>
   );

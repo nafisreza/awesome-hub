@@ -87,7 +87,10 @@ export function RepoCard({ repo }: RepoCardProps) {
                 )}
               </div>
 
-              <CardTitle className="text-gradient mb-1 origin-left text-lg leading-tight font-bold transition-transform group-hover:scale-105">
+              <CardTitle 
+                className="text-gradient-primary mb-1 origin-left text-lg leading-tight font-bold transition-transform group-hover:scale-105"
+
+              >
                 {repo.name}
               </CardTitle>
 

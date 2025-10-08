@@ -1,36 +1,53 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent } from "@/components/ui/card";
 
 export function ContributorsSkeleton() {
   return (
-    <section className="py-16 px-6">
-      <div className="max-w-6xl mx-auto">
+    <section className="relative py-24 px-6">
+      {/* Background elements */}
+      <div className="absolute inset-0 gradient-mesh opacity-20" />
+
+      <div className="relative max-w-7xl mx-auto">
         {/* Header skeleton */}
-        <div className="text-center mb-12">
-          <Skeleton className="h-8 w-48 mx-auto mb-4" />
-          <Skeleton className="h-10 w-80 mx-auto mb-4" />
-          <Skeleton className="h-6 w-96 mx-auto" />
+        <div className="text-center mb-16">
+          <Skeleton className="h-8 w-64 mx-auto mb-4 rounded-full" />
+          <Skeleton className="h-12 w-96 mx-auto mb-6" />
+          <Skeleton className="h-6 w-[500px] mx-auto" />
         </div>
 
         {/* Contributors grid skeleton */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 mb-8">
-          {[...Array(12)].map((_, i) => (
-            <Card key={i} className="glass-strong border-0 p-4">
-              <CardContent className="p-0 flex flex-col items-center">
-                {/* Avatar skeleton */}
-                <Skeleton className="h-20 w-20 rounded-full mb-3" />
-                {/* Username skeleton */}
-                <Skeleton className="h-4 w-20 mb-2" />
-                {/* Contributions skeleton */}
-                <Skeleton className="h-3 w-16" />
-              </CardContent>
-            </Card>
-          ))}
+        <div className="mb-12">
+          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-4 sm:gap-5 max-w-xl mx-auto">
+            {[...Array(14)].map((_, i) => (
+              <Skeleton key={i} className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded-full" />
+            ))}
+          </div>
         </div>
 
-        {/* View all button skeleton */}
-        <div className="text-center">
-          <Skeleton className="h-10 w-48 mx-auto rounded-lg" />
+        {/* Footer stats card skeleton */}
+        <div className="glass-strong rounded-2xl p-6 md:p-8 border border-border/50 max-w-[800px] mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <Skeleton className="h-12 w-12 sm:h-16 sm:w-16 rounded-2xl" />
+                <div>
+                  <Skeleton className="h-8 sm:h-10 w-16 sm:w-20 mb-2" />
+                  <Skeleton className="h-3 sm:h-4 w-28 sm:w-32" />
+                </div>
+              </div>
+              
+              <div className="hidden sm:block w-px h-16 bg-border" />
+              
+              <div className="flex items-center gap-3 sm:gap-4">
+                <Skeleton className="h-12 w-12 sm:h-16 sm:w-16 rounded-2xl" />
+                <div>
+                  <Skeleton className="h-8 sm:h-10 w-16 sm:w-20 mb-2" />
+                  <Skeleton className="h-3 sm:h-4 w-28 sm:w-32" />
+                </div>
+              </div>
+            </div>
+            
+            <Skeleton className="h-12 w-full sm:w-48 rounded-lg" />
+          </div>
         </div>
       </div>
     </section>

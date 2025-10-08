@@ -7,10 +7,10 @@ import { Header } from "@/components/header";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <Header />
       {/* Add top padding to account for fixed header */}
-      <main className="pt-16">
+      <main className="">
         <HeroSection />
         <SearchSection />
         <div className="container mx-auto px-4 lg:px-6">

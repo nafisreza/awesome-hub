@@ -1,83 +1,94 @@
-'use client'
+'use client';
 
-import { Sparkles, Zap, Trophy } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { useEffect, useState } from 'react'
+import { Sparkles, Zap, Trophy } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
 
 export function HeroSection() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const [isVisible, setIsVisible] = useState(false)
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    setIsVisible(true)
-    
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
-    }
+    setIsVisible(true);
 
-    window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
-  }, [])
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   return (
-    <section className="relative pt-12 flex items-center justify-center overflow-hidden">
+    <section className="relative flex items-center justify-center overflow-hidden pt-12">
       {/* Animated Background */}
-      <div className="absolute inset-0 gradient-mesh opacity-60" />
-      
+      <div className="gradient-mesh absolute inset-0 opacity-60" />
+
       {/* Interactive cursor spotlight */}
-      <div 
-        className="absolute inset-0 opacity-20 pointer-events-none"
+      <div
+        className="pointer-events-none absolute inset-0 opacity-20"
         style={{
-          background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, hsl(var(--primary)/0.1), transparent 40%)`
+          background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, hsl(var(--primary)/0.1), transparent 40%)`,
         }}
       />
-      
+
       {/* Floating elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-20 w-2 h-2 bg-primary/30 rounded-full animate-float" />
-        <div className="absolute top-40 right-32 w-1 h-1 bg-accent/40 rounded-full animate-float" style={{ animationDelay: '1s' }} />
-        <div className="absolute bottom-32 left-1/4 w-3 h-3 bg-primary/20 rounded-full animate-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute bottom-20 right-20 w-1.5 h-1.5 bg-accent/30 rounded-full animate-float" style={{ animationDelay: '0.5s' }} />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="bg-primary/30 animate-float absolute top-20 left-20 h-2 w-2 rounded-full" />
+        <div
+          className="bg-accent/40 animate-float absolute top-40 right-32 h-1 w-1 rounded-full"
+          style={{ animationDelay: '1s' }}
+        />
+        <div
+          className="bg-primary/20 animate-float absolute bottom-32 left-1/4 h-3 w-3 rounded-full"
+          style={{ animationDelay: '2s' }}
+        />
+        <div
+          className="bg-accent/30 animate-float absolute right-20 bottom-20 h-1.5 w-1.5 rounded-full"
+          style={{ animationDelay: '0.5s' }}
+        />
       </div>
 
-      <div className={`relative z-10 max-w-6xl mx-auto px-6 text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <div
+        className={`relative z-10 mx-auto max-w-6xl px-6 text-center transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
+      >
         {/* Badge */}
         <div className="mb-8">
-          <Badge variant="secondary" className=" px-4 py-2 text-sm font-medium border border-gray-300 rounded-full">
-            <Sparkles className="w-4 h-4 mr-2" />
+          <Badge variant="secondary" className="rounded-full border border-gray-300 px-4 py-2 text-sm font-medium">
+            <Sparkles className="mr-2 h-4 w-4" />
             Hacktoberfest 2025 • Open Source
           </Badge>
         </div>
 
         {/* Main heading */}
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-          <span className="block text-gray-700 mb-2">AwesomeHub</span>
-          <span className="block text-2xl md:text-3xl lg:text-4xl font-medium text-muted-foreground">
+        <h1 className="mb-6 text-4xl leading-tight font-bold md:text-6xl lg:text-7xl">
+          <span className="mb-2 block text-gray-700">AwesomeHub</span>
+          <span className="text-muted-foreground block text-2xl font-medium md:text-3xl lg:text-4xl">
             The Universe of Awesome Lists
           </span>
         </h1>
 
         {/* Description */}
-        <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
-          Discover, explore, and curate the most incredible collections on GitHub. 
-          From cutting-edge frameworks to mind-blowing resources – everything awesome, 
-          beautifully organized.
+        <p className="text-muted-foreground mx-auto mb-12 max-w-3xl text-lg leading-relaxed md:text-xl">
+          Discover, explore, and curate the most incredible collections on GitHub. From cutting-edge frameworks to
+          mind-blowing resources – everything awesome, beautifully organized.
         </p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-          <Button size="lg" className="group relative overflow-hidden bg-primary hover:bg-primary/90 px-8 py-4 text-lg transition-all duration-300 hover-lift">
+        <div className="mb-16 flex flex-col justify-center gap-4 sm:flex-row">
+          <Button
+            size="lg"
+            className="group bg-primary hover:bg-primary/90 hover-lift relative overflow-hidden px-8 py-4 text-lg transition-all duration-300"
+          >
             <span className="relative z-10">Explore Collections</span>
-            <Zap className="ml-2 w-5 h-5" />
+            <Zap className="ml-2 h-5 w-5" />
           </Button>
-          
-          <Button size="lg" variant="outline" className="glass hover-lift px-8 py-4 text-lg group">
-            <Trophy className="mr-2 w-5 h-5" />
+
+          <Button size="lg" variant="outline" className="glass hover-lift group px-8 py-4 text-lg">
+            <Trophy className="mr-2 h-5 w-5" />
             Contribute
-            <div className="ml-2 px-2 py-1 bg-primary/10 rounded-full text-xs">
-              +1K
-            </div>
+            <div className="bg-primary/10 ml-2 rounded-full px-2 py-1 text-xs">+1K</div>
           </Button>
         </div>
 
@@ -115,5 +126,5 @@ export function HeroSection() {
         </div> */}
       </div>
     </section>
-  )
+  );
 }

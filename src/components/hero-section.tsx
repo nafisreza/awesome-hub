@@ -55,7 +55,7 @@ export function HeroSection() {
       >
         {/* Badge */}
         <div className="mb-8">
-          <Badge variant="secondary" className="rounded-full border border-gray-300 px-4 py-2 text-sm font-medium">
+          <Badge variant="secondary" className="rounded-full border border-border px-4 py-2 text-sm font-medium">
             <Sparkles className="mr-2 h-4 w-4" />
             Hacktoberfest 2025 • Open Source
           </Badge>
@@ -63,7 +63,7 @@ export function HeroSection() {
 
         {/* Main heading */}
         <h1 className="mb-6 text-4xl leading-tight font-bold md:text-6xl lg:text-7xl">
-          <span className="mb-2 block text-gray-700">AwesomeHub</span>
+          <span className="mb-2 block text-foreground">AwesomeHub</span>
           <span className="text-muted-foreground block text-2xl font-medium md:text-3xl lg:text-4xl">
             The Universe of Awesome Lists
           </span>

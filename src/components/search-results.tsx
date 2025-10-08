@@ -52,9 +52,9 @@ export function SearchResults({
       <section className="mb-16">
         <div className="mx-auto max-w-6xl">
           <div className="mb-8 text-center">
-            <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-blue-600" />
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Searching repositories...</h2>
-            <p className="text-gray-600 dark:text-gray-400">
+            <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-primary" />
+            <h2 className="text-2xl font-bold text-foreground">Searching repositories...</h2>
+            <p className="text-muted-foreground">
               Finding awesome repositories for &ldquo;{searchQuery || 'awesome'}
               &rdquo;
             </p>
@@ -63,29 +63,29 @@ export function SearchResults({
           {/* Loading skeleton */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="animate-pulse rounded-xl bg-white p-6 shadow-lg dark:bg-slate-800">
+              <div key={i} className="glass-strong animate-pulse rounded-xl p-6 shadow-lg">
                 <div className="mb-4 flex items-start justify-between">
                   <div className="flex-1">
-                    <div className="mb-2 h-5 w-3/4 rounded bg-gray-200 dark:bg-gray-700"></div>
-                    <div className="h-4 w-1/2 rounded bg-gray-200 dark:bg-gray-700"></div>
+                    <div className="mb-2 h-5 w-3/4 rounded bg-muted"></div>
+                    <div className="h-4 w-1/2 rounded bg-muted"></div>
                   </div>
-                  <div className="h-4 w-4 rounded bg-gray-200 dark:bg-gray-700"></div>
+                  <div className="h-4 w-4 rounded bg-muted"></div>
                 </div>
                 <div className="mb-4 space-y-2">
-                  <div className="h-3 rounded bg-gray-200 dark:bg-gray-700"></div>
-                  <div className="h-3 w-4/5 rounded bg-gray-200 dark:bg-gray-700"></div>
+                  <div className="h-3 rounded bg-muted"></div>
+                  <div className="h-3 w-4/5 rounded bg-muted"></div>
                 </div>
                 <div className="mb-4 flex gap-2">
-                  <div className="h-6 w-16 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                  <div className="h-6 w-20 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                  <div className="h-6 w-12 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                  <div className="h-6 w-16 rounded-full bg-muted"></div>
+                  <div className="h-6 w-20 rounded-full bg-muted"></div>
+                  <div className="h-6 w-12 rounded-full bg-muted"></div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex gap-4">
-                    <div className="h-4 w-12 rounded bg-gray-200 dark:bg-gray-700"></div>
-                    <div className="h-4 w-12 rounded bg-gray-200 dark:bg-gray-700"></div>
+                    <div className="h-4 w-12 rounded bg-muted"></div>
+                    <div className="h-4 w-12 rounded bg-muted"></div>
                   </div>
-                  <div className="h-4 w-16 rounded bg-gray-200 dark:bg-gray-700"></div>
+                  <div className="h-4 w-16 rounded bg-muted"></div>
                 </div>
               </div>
             ))}
@@ -99,8 +99,8 @@ export function SearchResults({
     <section className="mb-16">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8">
-          <h2 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">Search Results</h2>
-          <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+          <h2 className="mb-2 text-2xl font-bold text-foreground">Search Results</h2>
+          <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
             <span>Found {results.length} repositories</span>
             {searchQuery && (
               <>
@@ -119,9 +119,9 @@ export function SearchResults({
 
         {results.length === 0 ? (
           <div className="py-12 text-center">
-            <Package className="mx-auto mb-4 h-16 w-16 text-gray-400" />
-            <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">No repositories found</h3>
-            <p className="mx-auto max-w-md text-gray-600 dark:text-gray-400">
+            <Package className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
+            <h3 className="mb-2 text-xl font-semibold text-foreground">No repositories found</h3>
+            <p className="mx-auto max-w-md text-muted-foreground">
               Try adjusting your search terms or category filter to find more repositories.
             </p>
           </div>
@@ -131,27 +131,27 @@ export function SearchResults({
               {results.map((repo) => (
                 <div
                   key={repo.id}
-                  className="group rounded-xl bg-white p-6 shadow-lg transition-all duration-200 hover:shadow-xl dark:bg-slate-800"
+                  className="glass-strong group rounded-xl p-6 shadow-lg transition-all duration-200 hover:shadow-xl"
                 >
                   <div className="mb-4 flex items-start justify-between">
                     <div className="min-w-0 flex-1">
-                      <h3 className="mb-1 truncate text-lg font-semibold text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
+                      <h3 className="mb-1 truncate text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
                         {repo.name}
                       </h3>
-                      <p className="truncate text-sm text-gray-600 dark:text-gray-400">{repo.full_name}</p>
+                      <p className="truncate text-sm text-muted-foreground">{repo.full_name}</p>
                     </div>
                     <a
                       href={repo.html_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-shrink-0 p-2 text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-300"
+                      className="flex-shrink-0 p-2 text-muted-foreground transition-colors hover:text-foreground"
                       title="Open on GitHub"
                     >
                       <ExternalLink className="h-4 w-4" />
                     </a>
                   </div>
 
-                  <p className="mb-4 line-clamp-2 min-h-[2.5rem] text-sm text-gray-700 dark:text-gray-300">
+                  <p className="mb-4 line-clamp-2 min-h-[2.5rem] text-sm text-foreground">
                     {repo.description || 'No description available'}
                   </p>
 
@@ -159,19 +159,19 @@ export function SearchResults({
                     {(repo.topics || []).slice(0, 5).map((topic) => (
                       <span
                         key={topic}
-                        className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                        className="rounded-full bg-primary/10 px-2 py-1 text-xs text-primary"
                       >
                         {topic}
                       </span>
                     ))}
                     {(repo.topics?.length || 0) > 5 && (
-                      <span className="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-600 dark:bg-gray-700 dark:text-gray-400">
+                      <span className="rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground">
                         +{(repo.topics?.length || 0) - 5}
                       </span>
                     )}
                   </div>
 
-                  <div className="mb-3 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+                  <div className="mb-3 flex items-center justify-between text-sm text-muted-foreground">
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-1">
                         <Star className="h-4 w-4" />
@@ -195,10 +195,10 @@ export function SearchResults({
                   </div>
 
                   {repo.language && (
-                    <div className="border-t border-gray-200 pt-3 dark:border-gray-700">
+                    <div className="border-t border-border pt-3">
                       <div className="flex items-center gap-2">
                         <div className={`h-3 w-3 rounded-full ${getLanguageColor(repo.language)}`}></div>
-                        <span className="text-xs text-gray-600 dark:text-gray-400">{repo.language}</span>
+                        <span className="text-xs text-muted-foreground">{repo.language}</span>
                       </div>
                     </div>
                   )}
@@ -211,7 +211,7 @@ export function SearchResults({
                 <button
                   onClick={onLoadMore}
                   disabled={isLoadingMore}
-                  className="mx-auto flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-8 py-3 font-medium transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-slate-800 dark:hover:bg-slate-700"
+                  className="mx-auto flex items-center gap-2 rounded-lg border border-border bg-card px-8 py-3 font-medium transition-colors hover:bg-accent disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isLoadingMore ? (
                     <>

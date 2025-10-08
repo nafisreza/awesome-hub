@@ -42,7 +42,7 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="group flex items-center gap-3">
             <div className="flex flex-col">
-              <span className="text-xl font-bold text-gray-900">AwesomeHub</span>
+              <span className="text-xl font-bold text-foreground">AwesomeHub</span>
             </div>
           </Link>
 
@@ -113,7 +113,7 @@ export function Header() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
                   transition={{ duration: 0.25, ease: "easeInOut" }}
-                  className="fixed left-0 right-0 top-[4rem] p-5 pt-0 bg-white border-b border-b-white/20 shadow-4xl z-50"
+                  className="fixed left-0 right-0 top-[4rem] p-5 pt-0 bg-background border-b border-border/20 shadow-4xl z-50"
                 >
                   {/* Mobile Navigation */}
                   <nav className="flex flex-col gap-2 py-2">

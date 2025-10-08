@@ -6,7 +6,7 @@ export function FeaturedReposSkeleton() {
       <h2 className="mb-8 text-center text-3xl font-bold">Featured Repositories</h2>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="rounded-xl bg-white p-6 shadow-lg dark:bg-slate-800">
+          <div key={i} className="glass-strong rounded-xl p-6 shadow-lg">
             <Skeleton className="mb-2 h-5 w-3/4" />
             <Skeleton className="mb-4 h-3 w-1/2" />
             <Skeleton className="mb-2 h-3 w-full" />
@@ -23,7 +23,7 @@ export function FeaturedReposSkeleton() {
               </div>
               <Skeleton className="h-3 w-12" />
             </div>
-            <div className="mt-3 border-t border-gray-200 pt-3 dark:border-gray-700">
+            <div className="mt-3 border-t border-border pt-3">
               <Skeleton className="h-3 w-20" />
             </div>
           </div>

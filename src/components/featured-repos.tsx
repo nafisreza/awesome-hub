@@ -52,26 +52,26 @@ export function FeaturedRepos() {
 
   return (
     <section className="mb-16">
-      <h2 className="mb-8 text-center text-3xl font-bold text-gray-900 dark:text-white">Featured Repositories</h2>
+      <h2 className="mb-8 text-center text-3xl font-bold text-foreground">Featured Repositories</h2>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {repos.map((repo) => (
           <div
             key={repo.id}
-            className="rounded-xl bg-white p-6 shadow-lg transition-shadow duration-200 hover:shadow-xl dark:bg-slate-800"
+            className="glass-strong rounded-xl p-6 shadow-lg transition-shadow duration-200 hover:shadow-xl"
           >
             <div className="mb-4 flex items-start justify-between gap-2">
               <div className="flex-1">
                 <Link href={`/repo/${repo.owner.login}/${repo.name}`}>
-                  <h3 className="mb-1 cursor-pointer text-lg font-semibold text-gray-900 transition-colors hover:text-blue-600 dark:text-white dark:hover:text-blue-400">
+                  <h3 className="mb-1 cursor-pointer text-lg font-semibold text-foreground transition-colors hover:text-primary">
                     {repo.name}
                   </h3>
                 </Link>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{repo.full_name}</p>
+                <p className="text-sm text-muted-foreground">{repo.full_name}</p>
               </div>
               <button
                 aria-label="Copy repository URL"
                 onClick={() => handleCopyURL(repo)}
-                className="cursor-pointer text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-300"
+                className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground"
               >
                 {copiedRepoId === repo.id ? (
                   <ClipboardCheck
@@ -98,13 +98,13 @@ export function FeaturedRepos() {
                 href={repo.html_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-0.5 text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-300"
+                className="mt-0.5 text-muted-foreground transition-colors hover:text-foreground"
               >
                 <ExternalLink className="size-4.5" />
               </a>
             </div>
 
-            <p className="mb-4 line-clamp-2 text-sm text-gray-700 dark:text-gray-300">
+            <p className="mb-4 line-clamp-2 text-sm text-foreground">
               {repo.description || 'No description available'}
             </p>
 
@@ -112,19 +112,19 @@ export function FeaturedRepos() {
               {repo.topics.slice(0, 3).map((topic) => (
                 <span
                   key={topic}
-                  className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                  className="rounded-full bg-primary/10 px-2 py-1 text-xs text-primary"
                 >
                   {topic}
                 </span>
               ))}
               {repo.topics.length > 3 && (
-                <span className="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-600 dark:bg-gray-700 dark:text-gray-400">
+                <span className="rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground">
                   +{repo.topics.length - 3}
                 </span>
               )}
             </div>
 
-            <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
                   <Star className="h-4 w-4" />
@@ -147,8 +147,8 @@ export function FeaturedRepos() {
             </div>
 
             {repo.language && (
-              <div className="mt-3 border-t border-gray-200 pt-3 dark:border-gray-700">
-                <span className="inline-flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+              <div className="mt-3 border-t border-border pt-3">
+                <span className="inline-flex items-center gap-2 text-xs text-muted-foreground">
                   <div className="h-3 w-3 rounded-full bg-gradient-to-r from-blue-400 to-purple-500"></div>
                   {repo.language || 'Unknown'}
                 </span>
@@ -159,7 +159,7 @@ export function FeaturedRepos() {
       </div>
 
       <div className="mt-8 text-center">
-        <button className="rounded-lg border border-gray-200 bg-white px-6 py-3 font-medium transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-slate-800 dark:hover:bg-slate-700">
+        <button className="rounded-lg border border-border bg-card px-6 py-3 font-medium transition-colors hover:bg-accent">
           View All Repositories
         </button>
       </div>

@@ -170,7 +170,7 @@ export function StatsSection() {
             <Activity className="h-4 w-4" />
             Real-time Statistics
           </div>
-          <h2 className="mb-4 text-3xl font-bold text-gray-700 md:text-4xl">Platform Insights</h2>
+          <h2 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">Platform Insights</h2>
           <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
             Discover the scale and impact of our awesome community through live metrics and engagement data.
           </p>
@@ -249,7 +249,7 @@ export function StatsSection() {
               <div className="mx-auto mb-4 w-fit rounded-xl bg-blue-500/10 p-3">
                 <Target className="h-6 w-6 text-blue-500" />
               </div>
-              <div className="mb-2 text-xl font-bold text-gray-700">98.5%</div>
+              <div className="mb-2 text-xl font-bold text-foreground">98.5%</div>
               <div className="text-muted-foreground text-sm">Uptime</div>
             </CardContent>
           </Card>
@@ -259,7 +259,7 @@ export function StatsSection() {
               <div className="mx-auto mb-4 w-fit rounded-xl bg-green-500/10 p-3">
                 <TrendingUp className="h-6 w-6 text-green-500" />
               </div>
-              <div className="mb-2 text-xl font-bold text-gray-700">2.4M</div>
+              <div className="mb-2 text-xl font-bold text-foreground">2.4M</div>
               <div className="text-muted-foreground text-sm">Monthly Views</div>
             </CardContent>
           </Card>
@@ -269,7 +269,7 @@ export function StatsSection() {
               <div className="mx-auto mb-4 w-fit rounded-xl bg-purple-500/10 p-3">
                 <GitFork className="h-6 w-6 text-purple-500" />
               </div>
-              <div className="mb-2 text-xl font-bold text-gray-700">156K</div>
+              <div className="mb-2 text-xl font-bold text-foreground">156K</div>
               <div className="text-muted-foreground text-sm">Total Forks</div>
             </CardContent>
           </Card>

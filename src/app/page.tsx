@@ -4,8 +4,14 @@ import { FeaturedRepos } from "@/components/featured-repos";
 import { StatsSection } from "@/components/stats-section";
 import { ContributorsSection } from "@/components/contributors-section";
 import { Header } from "@/components/header";
+// Optional: import { track } from '@vercel/analytics'; // ✅ for custom events
 
 export default function Home() {
+  // Example of a custom analytics event:
+  // const handleExploreClick = () => {
+  //   track('explore_clicked', { section: 'featured' });
+  // };
+
   return (
     <div className="bg-background min-h-screen">
       <Header />

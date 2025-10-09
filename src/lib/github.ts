@@ -1,8 +1,20 @@
 import { Octokit } from '@octokit/rest';
 
+// Initialize Octokit with GitHub token for higher rate limits
 const octokit = new Octokit({
-  auth: process.env.GITHUB_TOKEN, // Will work without token (lower rate limits)
+  auth: process.env.GITHUB_TOKEN,
+  userAgent: 'awesome-hub-app/1.0.0',
 });
+
+// Log authentication status (only in development)
+if (process.env.NODE_ENV === 'development') {
+  if (process.env.GITHUB_TOKEN) {
+    console.log('✅ GitHub API authenticated - Rate limit: 5,000/hour');
+  } else {
+    console.log('⚠️  GitHub API unauthenticated - Rate limit: 60/hour');
+    console.log('💡 Add GITHUB_TOKEN to .env.local for higher rate limits');
+  }
+}
 
 export interface GitHubRepo {
   id: number;
@@ -147,6 +159,22 @@ export class GitHubService {
     return this.searchAwesomeRepos({
       dateRange: 'week',
       minStars: 10,
+    });
+  }
+
+  // Enhanced trending repos with better filtering
+  static async getTrendingReposByTimeRange(timeRange: 'day' | 'week' | 'month'): Promise<GitHubRepo[]> {
+    const minStarsMap = {
+      day: 5,
+      week: 10,
+      month: 50,
+    };
+
+    return this.searchAwesomeRepos({
+      dateRange: timeRange,
+      minStars: minStarsMap[timeRange],
+      sort: 'updated',
+      order: 'desc',
     });
   }
 

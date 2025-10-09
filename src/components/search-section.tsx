@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search, Sparkles, Hash, Zap, Globe, Code, Database, Shield, Server } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -25,34 +25,67 @@ const categories = [
 ];
 
 const trendingSearches = [
-  'awesome-react', 'awesome-python', 'awesome-javascript', 'awesome-ai', 
+  'awesome-react', 'awesome-python', 'awesome-javascript', 'awesome-ai',
   'awesome-golang', 'awesome-rust', 'awesome-vue', 'awesome-nodejs'
 ];
-
+const popularlist = ["awesome-chatgpt-prompts", "awesome-go", "awesome-hacking", "awesome", "awesome-selfhosting"]
 export function SearchSection() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isSearching, setIsSearching] = useState(false);
   const [isCommandOpen, setIsCommandOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [showdropdown, Setshowdropdown] = useState<boolean>(false);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [highlightIndex, setHighlightIndex] = useState<number>(-1);
+  const combinedList = [...recentSearches, ...popularlist.slice(0, 5)];
 
+
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem("recentSearches") || "[]");
+    setRecentSearches(saved);
+  }, []);
+
+  // function to save the recent serach keywords to local storage 
+  const saveRecentSearch = (query: string) => {
+    if (!query.trim()) return;
+    const updated = [query, ...recentSearches.filter(q => q !== query)].slice(0, 5);
+    setRecentSearches(updated);
+    localStorage.setItem("recentSearches", JSON.stringify(updated));
+  };
   const handleSearch = () => {
     setIsSearching(true);
+    saveRecentSearch(searchQuery);
+    setSearchQuery("")
     setTimeout(() => {
       setIsSearching(false);
     }, 2000);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "ArrowDown") {
       e.preventDefault();
-      handleSearch();
-    }
-    if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+      setHighlightIndex(prev => (prev + 1) % combinedList.length);
+      Setshowdropdown(true);
+    } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setIsCommandOpen(true);
+      setHighlightIndex(prev => (prev <= 0 ? combinedList.length - 1 : prev - 1));
+      Setshowdropdown(true);
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (highlightIndex >= 0 && highlightIndex < combinedList.length) {
+        const selected = combinedList[highlightIndex];
+        setSearchQuery(selected);
+        saveRecentSearch(selected);
+        Setshowdropdown(false);
+      } else {
+        handleSearch();
+      }
+    } else if (e.key === "Escape") {
+      Setshowdropdown(false);
     }
   };
+
 
   const selectedCat = categories.find(cat => cat.value === selectedCategory);
 
@@ -60,7 +93,7 @@ export function SearchSection() {
     <section className="relative py-16 px-6">
       {/* Background gradient */}
       <div className="absolute inset-0 gradient-mesh opacity-30" />
-      
+
       <div className="relative max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
@@ -91,20 +124,71 @@ export function SearchSection() {
                     type="text"
                     placeholder="Search awesome repositories... (⌘K)"
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value)
+                      Setshowdropdown(e.target.value.length > 0);
+                    }}
                     onKeyDown={handleKeyDown}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
+                    onFocus={() => {
+                      setIsFocused(true)
+                      Setshowdropdown(true);
+                    }}
+                    onBlur={() => {
+                      setIsFocused(false);
+                      Setshowdropdown(false);
+                      setHighlightIndex(-1);
+                    }}
+
                     className="pl-12 pr-4 py-4 text-lg bg-background/50 border-border/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 rounded-lg transition-all"
                   />
-                  
+
                   {/* Command shortcut */}
                   <div className="absolute right-4 hidden md:flex items-center gap-1 text-xs text-muted-foreground">
                     <kbd className="px-2 py-1 bg-muted rounded text-xs">⌘</kbd>
-                    <kbd className="px-2 py-1 bg-muted rounded text-xs">K</kbd>
+                    <kbd className="px-2 py-1 bg-muted rounded text-xs">k</kbd>
                   </div>
                 </div>
               </div>
+              {/* dropdow ui when user is typing or focus  */}
+              {
+                showdropdown && <div className='w-auto h-auto bg-white rounded-2xl   p-4'>
+                  <div className='text-black text-lg m-1.5 mb-4'> Recent searchs
+                  </div>
+                  {
+                    recentSearches.map((child, index) => (
+                      <span
+                        key={index}
+                        className={`bg-gray-200 rounded-2xl ml-2 text-black p-2 cursor-pointer text-md hover:border-2 border-gray-600 ${highlightIndex === index ? "border-2 border-blue-600 bg-blue-100" : ""
+                          }`}
+                        onMouseDown={() => {
+                          setSearchQuery(child);
+                          Setshowdropdown(false);
+                        }}
+                      >
+                        {child}
+                      </span>
+                    ))
+
+                  }
+                  <div className='text-black text-lg m-1.5 mb-4'> Popular searchs </div>
+                  {
+                    popularlist.slice(0, 5).map((child, index) => (
+                      <span
+                        key={index}
+                        className={`bg-gray-200 rounded-2xl ml-2 text-black p-2 cursor-pointer text-md hover:border-2 border-gray-600 ${highlightIndex === recentSearches.length + index ? "border-2 border-blue-600 bg-blue-100" : ""
+                          }`}
+                        onMouseDown={() => {
+                          setSearchQuery(child);
+                          Setshowdropdown(false);
+                        }}
+                      >
+                        {child}
+                      </span>
+                    ))
+
+                  }
+                </div>
+              }
 
               {/* Filters */}
               <div className="flex flex-col md:flex-row gap-4">
@@ -138,7 +222,7 @@ export function SearchSection() {
 
                 <div className="md:w-auto">
                   <label className="block text-sm font-medium text-muted-foreground mb-2 md:invisible">Action</label>
-                  <Button 
+                  <Button
                     onClick={handleSearch}
                     disabled={isSearching}
                     size="lg"
@@ -164,9 +248,9 @@ export function SearchSection() {
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-sm text-muted-foreground font-medium">Trending:</span>
                   {trendingSearches.slice(0, 4).map((search, index) => (
-                    <Badge 
+                    <Badge
                       key={search}
-                      variant="secondary" 
+                      variant="secondary"
                       className="cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors animate-float"
                       style={{ animationDelay: `${index * 0.1}s` }}
                       onClick={() => setSearchQuery(search)}
@@ -231,7 +315,7 @@ export function SearchSection() {
               <h3 className="text-xl font-semibold text-gradient">Search Results</h3>
               <div className="text-sm text-muted-foreground">Searching awesome repositories...</div>
             </div>
-            
+
             <div className="grid gap-4">
               {[...Array(5)].map((_, i) => (
                 <Card key={i} className="glass-strong border-0 p-6">

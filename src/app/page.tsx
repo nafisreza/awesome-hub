@@ -4,6 +4,7 @@ import { FeaturedRepos } from "@/components/featured-repos";
 import { StatsSection } from "@/components/stats-section";
 import { ContributorsSection } from "@/components/contributors-section";
 import { Header } from "@/components/header";
+import AdvancedSearch from "@/components/search/AdvancedSearch";
 
 export default function Home() {
   return (
@@ -12,7 +13,8 @@ export default function Home() {
       {/* Add top padding to account for fixed header */}
       <main className="">
         <HeroSection />
-        <SearchSection />
+        {/* <SearchSection /> */}
+        <AdvancedSearch/>
         <div className="container mx-auto px-4 lg:px-6">
           <FeaturedRepos />
         </div>

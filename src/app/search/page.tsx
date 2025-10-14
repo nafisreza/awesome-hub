@@ -24,7 +24,7 @@ const categories = [
   { value: 'rust', label: 'Rust' },
 ];
 
-export default function SearchPageContent() {
+function SearchPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -225,7 +225,7 @@ const [dateRange, setDateRange] = useState<"day" | "week" | "month" | "year" | "
                     onChange={(e) => setMinForks(e.target.value)}
                     className="p-2 border rounded"
                   />
-                  <Select value={dateRange} onValueChange={setDateRange}>
+                  <Select value={dateRange} onValueChange={(value: "day" | "week" | "month" | "year" | "") => setDateRange(value)}>
                     <SelectTrigger className="bg-background/50 border-border/50 w-full">
                       <SelectValue />
                     </SelectTrigger>
@@ -339,7 +339,7 @@ function SearchPageFallback() {
   );
 }
 
-export function SearchPage() {
+export default function SearchPage() {
   return (
     <Suspense fallback={<SearchPageFallback />}>
       <SearchPageContent />

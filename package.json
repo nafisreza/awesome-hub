@@ -59,6 +59,7 @@
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@tailwindcss/typography": "^0.5.19",
+    "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^20.19.18",
     "@types/react": "^19",
     "@types/react-dom": "^19",

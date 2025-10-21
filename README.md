@@ -17,7 +17,8 @@ AwesomeHub is a centralized platform that aggregates, categorizes, and makes dis
 - **Trending**: Discover trending and newly added awesome lists
 
 ## Visual Tour
-   <img width="1902" height="990" alt="image" src="" />
+  <img src="https://github.com/Tarini-Ag/awesome-hub/blob/main/public/c519285d-42ee-4745-8dbe-b9ac965516c8.png?raw=true" width="800" alt="Homepage Screenshot">
+
 
 
 ## Quick Start
